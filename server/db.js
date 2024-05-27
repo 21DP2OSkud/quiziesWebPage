@@ -30,7 +30,7 @@ const con = mysql.createConnection({
 })
 
 
-// Initialize Express app
+// Initialize Express app dsd
 const app = express();
 app.use(cors()); //Lai strādātu citi porti
 app.use(express.json());
