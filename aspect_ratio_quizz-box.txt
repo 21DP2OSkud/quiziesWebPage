@@ -1,0 +1,10 @@
+aspec ratio 16/9
+full window:
+	should be: 499.5 x 280.69
+	
+	bet ir: 4995.5 x 280.97
+	
+windowed:
+	should be: 374.48 x 210.38
+	
+	bet ir: 374.48 x 210.64

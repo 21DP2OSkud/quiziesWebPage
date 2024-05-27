@@ -1,0 +1,45 @@
+How to set up and install tailwind.css into my project?
+OS: Ubuntu 22.04.4 LTS
+Node version: v12.22.9
+Npm version: 8.5.1
+
+
+-----------Update node------------
+https://www.youtube.com/watch?v=CDP1VShZp9E&ab_channel=OSTechHelp
+
+
+------Install Tailwind css--------
+https://www.youtube.com/watch?v=XtnWD0e7970&ab_channel=AyyazTech
+
+https://tailwindcss.com/docs/installation
+
+errors:
+'tailwind' is not recognized as an internal or external command,
+operable program or batch file.
+
+then:
+npm install -D tailwindcss
+
+
+-------Using Tailwind css---------
+npx tailwindcss -i ./src/input.css -o ./src/output.css --watch
+
+////////////////////////////////////////////////////////////////
+------------MySQL setup-----------
+https://www.youtube.com/watch?v=WWm2d1xC6Kc&ab_channel=ExploringMyComputer
+https://www.youtube.com/watch?v=vrj9AohVhPA&ab_channel=NsquaredCoding
+
+Libraries:
+sudo npm install express
+sudo nmp install cors
+sudo npm install moment
+npm install bcrypt express-session
+
+-------------Start DB-------------
+password: admin
+
+
+commands:
+sudo systemctl start mysql
+sudo systemctl status mysql
+    

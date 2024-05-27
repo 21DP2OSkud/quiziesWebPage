@@ -1,0 +1,423 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.active {
+    color: blue !important;
+}
+
+#user-dropdown {
+    position: absolute;
+    top: -50%; /* Position the drop-down right below the user profile picture */
+    left: 50%; /* Center the drop-down horizontally */
+    transform: translateX(-50%); /* Adjustments for centering */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/*Search bar*/
+.search-box {
+    background-color: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);    
+}
+
+.search-box-black {
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+}
+    
+.search-bar-input {
+    width: 100%;
+    background-color: transparent;
+}
+
+.search-placeholder {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+/**/
+.box {
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.quiz-box {
+    aspect-ratio: 16/9;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.quiz-box:hover {
+    cursor: pointer;
+}
+
+.quiz-box img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+    transition: filter 0.5s;
+}
+
+.quiz-box:hover img {
+    filter: blur(5px);
+}
+
+.quiz-box .description {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 75%;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75));
+    color: white;
+    transition: transform 0.5s;
+    transform: translateY(75%);
+    padding: 20px;
+}
+
+.quiz-box:hover .description {
+    transform: translateY(0);;
+}
+
+.quiz-box .quiz-title {
+    color: azure;
+    font-size: 1.8vw;
+    position: absolute;
+    top: 0;
+}
+
+.quiz-box .description hr {
+    position: absolute;
+    top: 22%;
+    width: 92%;
+    left: 4%;
+    border: none; /* Remove default border */
+    border-top: 0.15vw solid #e4dede; /* Add a custom top border */
+}
+
+.quiz-box .quiz-description {
+    color: white;
+    position: absolute;
+    top: 24%;
+    font-size: 0.8vw;
+}
+
+.quiz-box .edit-quiz-button {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    background-color: #007bff;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    visibility: hidden;
+    opacity: 100%;
+}
+
+.quiz-box:hover .edit-quiz-button {
+    visibility: visible;
+}
+
+.quiz-box .edit-quiz-button:hover {
+    animation: rainbow 8s infinite; /* Adjust the duration as needed */
+    color: white; /* Keep the color of the icon */
+    transform: scale(1.1);
+    transition: visibility 2s; /* Transition for visibility */
+    transition: transform 0.5s, background 0.5s; /* Add transition for background */
+    opacity: 100%;
+}
+
+@keyframes rainbow {
+    0% { background: linear-gradient(to bottom right, red, orange); }
+    14.29% { background: linear-gradient(to bottom right, orange, yellow); }
+    28.57% { background: linear-gradient(to bottom right, yellow, green); }
+    42.86% { background: linear-gradient(to bottom right, green, blue); }
+    57.14% { background: linear-gradient(to bottom right, blue, indigo); }
+    71.43% { background: linear-gradient(to bottom right, indigo, violet); }
+    85.71% { background: linear-gradient(to bottom right, violet, red); }
+    100% { background: linear-gradient(to bottom right, red, orange); }
+}
+
+
+
+/*Create quiz UI*/
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25); /* Semi-transparent black background */
+    backdrop-filter: blur(8px); /* Apply blur effect */
+    z-index: 998; /* Ensure the overlay is above all other content */
+}
+
+
+
+/* UI general */
+.ui {
+    position: fixed; /* Fixed position relative to the viewport */
+    top: 50%; /* Position the top of the UI at the vertical center of the viewport */
+    left: 50%; /* Position the left side of the UI at the horizontal center of the viewport */
+    transform: translate(-50%, -50%); /* Center the UI both horizontally and vertically */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    z-index: 999; /* Ensure the UI stays on top of other content */
+}
+
+.ui h2 {
+    text-align: center;
+    font-size: 1.2vw;
+}
+
+.ui .button-div button {
+    aspect-ratio: 8/1;
+    height: fit-content;
+    min-width: 88px;
+    color: black;
+    border: solid 2px white;
+    /*center text*/
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1vw;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.ui button:hover {
+    background: white;
+    transition: 0.3s;
+}
+
+
+
+/* CREATE QUIZ UI */
+.create-quiz-ui {
+    height: 768px;
+    width: 512px;
+}
+
+
+.create-quiz-ui .ui-img-wrapper {
+    padding: 1% 10%;
+    margin-top: 2%;
+    border-radius: 8px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-quiz-ui .ui-img-wrapper h2 {
+    font-size: 1.2vw;
+}
+
+.create-quiz-ui .ui-img-wrapper .ui-display-img {
+    aspect-ratio: 16/9;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    border: solid 1px gray;
+    border-radius: 8px;
+}
+
+.create-quiz-ui #file-path {
+    display: none;
+}
+
+.create-quiz-ui .ui-img-wrapper .ui-display-img img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%; /* Lai bilde nepaliek lielaaka augstuma ziņā */
+    border-radius: 8px;
+}
+
+.create-quiz-ui .input-field-div {
+    padding: 4% 10%;
+    /* background: aquamarine; */
+    width: 100%;
+    height: auto;
+}
+
+.create-quiz-ui .input-field-div label {
+    font-size: 1vw;
+    padding-top: 4%;
+}
+
+.create-quiz-ui .input-field-div input {
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;  
+}
+
+.create-quiz-ui .input-field-div textarea {
+    height: 256px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+}
+
+.create-quiz-ui .button-div {
+    position: absolute;
+    bottom: 0;
+    height: 88px;
+    width: 100%;
+    background-color: transparent;/*aquamarine;*/
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+
+
+/* EDIT QUIZ UI */
+.edit-quiz-ui {
+    height: 720px;
+    width: 1280px;
+}
+
+.edit-quiz-ui .hidden {
+    display: none;
+}
+
+.edit-quiz-ui h2 {
+    font-size: 1.2vw;
+    margin-top: 1%;
+}
+
+.edit-quiz-ui h3 {
+    margin-top: 3.5%;
+    font-size: 0.8vw;
+}
+
+.edit-quiz-ui .image-wrapper-div .ui-img-wrapper {
+    width: 80%;
+    aspect-ratio: 16/9;
+    height: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+}
+
+.edit-quiz-ui .child.left .image-wrapper-div .ui-img-wrapper .ui-display-img {
+    object-fit: cover;
+}
+
+.edit-quiz-ui #file-path {
+    display: none;
+}
+
+.edit-quiz-ui .image-wrapper-div .ui-img-wrapper .ui-display-img img {
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border: solid 2px gray;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.edit-quiz-ui .image-wrapper-div .ui-img-wrapper .ui-display-img img:hover {
+    opacity: 80%;
+}
+
+.edit-quiz-ui .input-field-div {
+    background-color: transparent;
+}
+
+.edit-quiz-ui .input-field-div label {
+    font-size: 1vw;
+    padding-top: 4%;
+}
+
+.edit-quiz-ui .input-field-div .title-div {
+    margin-bottom: 1%;
+}
+
+.edit-quiz-ui .input-field-div .title-div input {
+    width: 75%;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+}
+
+.edit-quiz-ui .input-field-div .description-div {
+    padding-bottom: 88px;
+    height: 100%;
+}
+
+.edit-quiz-ui .input-field-div .description-div textarea {
+    height: 80%;
+    width: 90%;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+}
+
+.edit-quiz-ui .button-div {
+    position: absolute;
+    bottom: 0;
+    height: 88px;
+    width: 100%;
+    background-color: transparent; /* aquamarine;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.edit-quiz-ui .button-div .delete-container {
+    position: absolute;
+    left: 0 !important;
+    height: 100%;
+    width: 13.8%;
+    display: flex; /* Use flexbox */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+.edit-quiz-ui .button-div .delete-button {
+    height: auto; /* Reset height */
+    min-width: 0;
+    width: 25%; /* Make the button fill the container width */
+    aspect-ratio: 1/1;
+    background-color: transparent;
+    color: black;
+}
+
+.edit-quiz-ui .button-div .delete-button:hover {
+    transform: scale(110%);
+    color: white;
+    background-color: #e53e3e;
+    transition: 0.3s;
+}
+
+.delete-quiz-warning-ui {
+    width: 512px;
+    height: 334px;
+}
+
+.delete-quiz-warning-ui .delete-quiz-btn-div {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin-bottom: 2.5%;
+}
+
+.delete-quiz-warning-ui .delete-quiz-btn-div .delete-button {
+    border: solid 2px #e53e3e;
+}
+
+.delete-quiz-warning-ui .delete-quiz-btn-div .delete-button:hover {
+    background-color: #e53e3e;
+    transition: 0.5s;
+}

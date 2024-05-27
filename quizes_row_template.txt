@@ -1,0 +1,37 @@
+            <!--Row 2-->
+            <div class="w-[30%] bg-gray-200 rounded-xl my-[1%] quiz-box">
+                <img src="" alt="quiz1 img">
+                <div class="description">
+                    <p>
+                        <span class="quiz-title font-bold italic">Quiz 1</span>
+                    </p>
+                    <hr>
+                    <p>
+                        <span class="quiz-description">There is the description of quiz 1</span>
+                    </p>
+                </div>
+            </div>
+            <div class="w-[30%] bg-gray-200 rounded-xl my-[1%] quiz-box">
+                <img src="" alt="quiz2 img">
+                <div class="description">
+                    <p>
+                        <span class="quiz-title font-bold italic">Quiz 2</span>
+                    </p>
+                    <hr>
+                    <p>
+                        <span class="quiz-description">There is the description of quiz 2</span>
+                    </p>
+                </div>
+            </div>
+            <div class="w-[30%] bg-gray-200 rounded-xl my-[1%] quiz-box">
+                <img src="" alt="quiz 3 img">
+                <div class="description">
+                    <p>
+                        <span class="quiz-title font-bold italic">Quiz 3</span>
+                    </p>
+                    <hr>
+                    <p>
+                        <span class="quiz-description">There is the description of quiz 3</span>
+                    </p>
+                </div>
+            </div>

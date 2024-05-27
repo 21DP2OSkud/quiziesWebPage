@@ -1,0 +1,12 @@
+vajdadzēja nomainīt paths
+    <link href="../output.css" rel="stylesheet">
+    <script src="../user_drop_down.js"></script>
+
+    ../index.html"
+    ../about.html
+    ../services.html
+    ../quizes.html
+
+    ../../users/user1_name.jpeg
+
+* visiem header ir "bg-zinc-200"
