@@ -1,6 +1,6 @@
 // db.js
 const express = require('express');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const session = require('express-session'); 
 const cors = require('cors'); //Priekš portiem
 const path = require('path'); //module provides utilities for working with file and directory paths.

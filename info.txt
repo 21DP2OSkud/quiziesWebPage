@@ -29,7 +29,9 @@ npx tailwindcss -i ./src/input.css -o ./src/output.css --watch
 https://www.youtube.com/watch?v=WWm2d1xC6Kc&ab_channel=ExploringMyComputer
 https://www.youtube.com/watch?v=vrj9AohVhPA&ab_channel=NsquaredCoding
 
+
 Libraries:
+npm install mysql2
 sudo npm install express
 sudo nmp install cors
 sudo npm install moment
