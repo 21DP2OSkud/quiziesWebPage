@@ -5,6 +5,12 @@ function createOverlay() {
     document.body.appendChild(overlay);
 }
 
+function closeUI(uiDiv) {
+    document.getElementsByClassName("overlay")[0].remove();
+    uiDiv.remove();
+}
+
 export {
-    createOverlay
+    createOverlay,
+    closeUI,
 }

@@ -12,6 +12,14 @@ const {
     loadQuizzesFromDB,
 } = clientSide;
 
+import * as userAuthentication from './gbl_user_authentication_ui.js';
+
+const {
+    createLogInUI,
+    createRegisterUI,
+    signOut,
+} = userAuthentication;
+
 
 document.addEventListener('DOMContentLoaded', function() {
     let isLoggedIn = false; // Set this to true if user is logged in
@@ -35,28 +43,53 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get the buttons for sign out and log in
     const btnSignOut = document.getElementById('btn_sign_out');
     const btnLogIn = document.getElementById('btn_log_in');
-
+    const btnRegister = document.getElementById('btn_register');
 
     // Add event listener for sign out button if it exists
-    if (btnSignOut) {
-        btnSignOut.addEventListener('click', function() {
+    if (btnLogIn) {
+        btnLogIn.addEventListener('click', function() {
+            /*
             toggleLoggedInState();
             console.log(isLoggedIn);
             console.log(userProfile);
             updateUserDropdown(isLoggedIn, userProfile);
+            */
+            console.log("Log In processing");
+            createLogInUI();
         });
     }
 
+
     // Add event listener for log in button if it exists
-    if (btnLogIn) {
-        btnLogIn.addEventListener('click', function() {
+    if (btnRegister) {
+        btnRegister.addEventListener('click', function() {
+            /*
             console.log("Login eksistee");
             toggleLoggedInState();
             console.log(isLoggedIn);
             console.log(userProfile);
             updateUserDropdown(isLoggedIn, userProfile);
+            */
+            console.log("Register processing");
+            createRegisterUI();
         });
     }
+
+    // Add event listener for sign out button if it exists
+    if (btnSignOut) {
+        btnSignOut.addEventListener('click', function() {
+            /*
+            toggleLoggedInState();
+            console.log(isLoggedIn);
+            console.log(userProfile);
+            updateUserDropdown(isLoggedIn, userProfile);
+            */
+            console.log("Sign out processing");
+            signOut();
+        });
+    }
+
+
     else {
         console.log("Login neeksistee");
     }
