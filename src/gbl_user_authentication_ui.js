@@ -24,9 +24,11 @@ function createLogInUI() {
     const emailDiv = document.createElement('div');
     const emailLabel = document.createElement('label');
     const emailInput = document.createElement('input');
+    const passwordWrapper = document.createElement('div');
     const passwordDiv = document.createElement('div');
     const passwordLabel = document.createElement('label');
     const passwordInput = document.createElement('input');
+    const passwordToggle = document.createElement('span');
     const submitButton = document.createElement('button');
     const noAccountLabel = document.createElement('label');
 
@@ -35,7 +37,7 @@ function createLogInUI() {
 
     emailLabel.textContent = "Email";
     emailLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
-    emailInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "leading-tight", "focus:outline-none", "focus:shadow-outline");
+    emailInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     emailInput.setAttribute("type", "email");
     emailInput.setAttribute("placeholder", "Enter your email");
 
@@ -44,6 +46,17 @@ function createLogInUI() {
     passwordInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     passwordInput.setAttribute("type", "password");
     passwordInput.setAttribute("placeholder", "Enter your password");
+
+    passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
+    passwordToggle.classList.add("absolute", "right-3", "top-1/2", "-translate-y-3/4", "cursor-pointer");
+    passwordToggle.addEventListener('click', function(){
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+    });
+
+    passwordWrapper.classList.add("relative", "mb-3");
+    passwordWrapper.appendChild(passwordInput);
+    passwordWrapper.appendChild(passwordToggle);
 
     submitButton.textContent = "Log In";
     submitButton.setAttribute('class', "bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-transform duration-200 transform hover:scale-105");
@@ -60,7 +73,7 @@ function createLogInUI() {
     emailDiv.appendChild(emailInput);
 
     passwordDiv.appendChild(passwordLabel);
-    passwordDiv.appendChild(passwordInput);
+    passwordDiv.appendChild(passwordWrapper);
 
     form.appendChild(h2);
     form.appendChild(emailDiv);

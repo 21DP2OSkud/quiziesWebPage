@@ -574,6 +574,10 @@ video {
   position: relative;
 }
 
+.inset-0 {
+  inset: 0px;
+}
+
 .bottom-0 {
   bottom: 0px;
 }
@@ -1240,6 +1244,15 @@ video {
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.daytime-display {
+  z-index: -1;
+  opacity: 0.5;
+  font-size: 4rem;
+  /* Adjust the size as needed */
+  color: #333;
+  /* Adjust the color as needed */
 }
 
 /**/

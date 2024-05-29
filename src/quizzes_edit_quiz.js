@@ -4,15 +4,6 @@ import * as ui from './gbl_create_ui.js';
 import * as create_quiz from './quizzes_create_quiz.js';
 
 const {
-    loadQuizzesFromDB,
-    deleteImgUrlFromServer,
-    deleteQuizFromDB,
-    addNewQuizDB,
-    updateQuizRecordDataDB,
-    updateQuizRecordDB
-} = clientSide;
-
-const {
     createOverlay,
 } = ui;
 
@@ -20,6 +11,13 @@ const {
     createQuizUI,
 } = create_quiz
 
+const {
+    deleteImgUrlFromServer,
+    deleteQuizFromDB,
+    addNewQuizDB,
+    updateQuizRecordDataDB,
+    updateQuizRecordDB,
+} = clientSide;
 
 //
 function createEditQuizUI(record) {
@@ -198,7 +196,10 @@ function createEditQuizUI(record) {
     /* child of btnDiv */
     const btn_addQuestions = document.createElement("button");
     btn_addQuestions.setAttribute("class", "rounded-lg px-8 py-1 mx-4");
-    btn_addQuestions.textContent = "Edit Quiz Questions";
+    btn_addQuestions.textContent = "Edit Quiz Page";
+    btn_addQuestions.addEventListener("click", function() {
+        alert("Will redirect to quiz edit page");
+    });
     /* child of btnDiv */
     const btn_saveUI = document.createElement("button");
     btn_saveUI.setAttribute("class", "rounded-lg px-8 py-1 mx-4");
@@ -294,45 +295,39 @@ function closeEditQuizUI() {
 }
 
 
-loadQuizzesFromDB()
-    .then(({ data,ids }) => { // {} - tajos ievieto to, ko tu vēlies iegūt kā parametrus
-        addEditButtonEventListeners(data, ids);
-        console.log(ids); // Ids of all quizzes
-    })
-    .catch(error => {
-        console.error(error);
-    });
-
-
-//
-function addEditButtonEventListeners(data_local, idsArray) {
-    // Goes through every record in DB
-    let ids = idsArray || [];
-
-    ids.forEach(quizID => { // Takes all of the existing records Ids from DB
-        document.getElementById("edit-quiz-" + quizID).addEventListener("click", function() {
-            console.log(data_local);
-
-            // Find the record with the matching quizID
-            const record = data_local.find(item => item.quiz_id === quizID);
-            if (record) {
-                // Call your function and pass the record as a parameter
-                createEditQuizUI(record);
-                console.log("Quiz edit button with id: " + quizID + " was pressed!");
-                console.log(record);
-            } else {
-                console.log("Quiz with id " + quizID + " not found.");
-            }
-        });
-    });
-}
-
+// quizzes_edit_quiz.js
+import { loadQuizzesFromDB } from './quizzes_loader.js';
 
 document.addEventListener('DOMContentLoaded', function() {
+    loadQuizzesFromDB()
+        .then(({ data, ids }) => {
+            addEditButtonEventListeners(data, ids);
+            console.log('Quiz IDs:', ids);
+        })
+        .catch(error => {
+            console.error('Error loading quizzes:', error);
+        });
+
     document.getElementById("btn-create-quiz").addEventListener("click", function() {
-        // Call your function here
         createQuizUI();
     });
 
-    addEditButtonEventListeners();
+    function addEditButtonEventListeners(data_local, idsArray) {
+        let ids = idsArray || [];
+
+        ids.forEach(quizID => {
+            document.getElementById("edit-quiz-" + quizID).addEventListener("click", function() {
+                console.log(data_local);
+
+                const record = data_local.find(item => item.quiz_id === quizID);
+                if (record) {
+                    createEditQuizUI(record);
+                    console.log("Quiz edit button with id: " + quizID + " was pressed!");
+                    console.log(record);
+                } else {
+                    console.log("Quiz with id " + quizID + " not found.");
+                }
+            });
+        });
+    }
 });

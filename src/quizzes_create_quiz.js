@@ -18,7 +18,7 @@ const {
 
 
 // Lai varētu loadot
-function createQuizBox(id, imgPath, title, description) {
+function createLoadedQuizzes(id, imgPath, title, description) {
     const quizParentDiv = document.getElementById("quizzes-parent-div");
 
     const newQuiz = document.createElement("div");
@@ -201,6 +201,6 @@ function closeCreateQuizUI() {
 
 //
 export {
-    createQuizBox,
+    createLoadedQuizzes,
     createQuizUI
 };

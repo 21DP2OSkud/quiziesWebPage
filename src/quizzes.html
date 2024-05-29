@@ -13,6 +13,8 @@
     <script src="./gbl_user_drop_down.js" type="module"></script>
     <!--User drop down menu-->
     <script src="./gbl_toolbar.js" type="module"></script>
+
+    <script src="./quizzes_clock_test.js" type="module"></script>
     <!--Search-->
     <script src="./quizzes_search.js" type="module"></script>
     <!--Create quiz-->
@@ -81,7 +83,7 @@
         <br>
         <br>
         <div class="max-w-screen mx-[25%] h-[48px] search-box relative rounded-full">
-            <input type="text" placeholder="Search..." class="search-bar-input rounded-full p-2 w-full h-full border-none outline-none" />
+            <input type="text" placeholder="Search..." class="search-bar-input rounded-full p-2 w-full h-full border-none outline-none" id="search-input"/>
             <button type="submit" id="searchBtn" class="fas fa-search text-white absolute end-2.5 bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-[0.88vw] px-4 h-[80%] translate-y-1/8 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition duration-300 ease-in-out transform hover:scale-105"> Search</button>
         </div>
         <br>
@@ -93,8 +95,10 @@
         <br>
 
         <div class="max-w-screen mx-[5%] h-auto box rounded-3xl flex flex-wrap justify-evenly" id="quizzes-parent-div">
+            <div id="daytime-display" class="daytime-display absolute inset-0 flex items-center justify-center"></div>
+
             <!--Row 1-->
-            
+            <!--
             <div class="w-[30%] bg-gray-200 rounded-xl my-[1%] quiz-box" id="quiz-0" onclick=redirectToQuizPage(0)>
                 <img src="quizzes_images/nature.jpeg" alt="Nature quiz img">
                 <div class="description">
@@ -128,7 +132,8 @@
                     <i class="fas fa-edit"></i>
                 </button>
             </div>
-            
+            -->
+
         </div>
 
     </div>

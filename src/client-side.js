@@ -1,51 +1,3 @@
-// Import the functions to be used in other files if needed
-import * as create_quiz from './quizzes_create_quiz.js';
-
-const {
-    createQuizBox,
-} = create_quiz;
-
-
-let data_local;
-let arrayOfQuizID = [];
-
-// Load already existing quizzes from DB
-function loadQuizzesFromDB() {
-    return new Promise((resolve, reject) => { // waiting for the operation to complete
-        fetch('http://localhost:3000/api/quizzes')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to load quizzes');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log(data);
-            data_local = data;
-            arrayOfQuizID = data.map(item => item.quiz_id); // Extracting IDs from the data
-            data.forEach(item => {
-                // Create objects
-                const quiz = {
-                    id: item.quiz_id,
-                    imgPath: item.imgUrl,
-                    title: item.title,
-                    description: item.description
-                };
-                // Append objects to DOM
-                createQuizBox(quiz.id, quiz.imgPath, quiz.title, quiz.description);
-            });
-            console.log(data_local);
-            resolve({ data: data_local, ids: arrayOfQuizID }); // Resolve the promise with data and IDs
-        })
-        .catch(error => {
-            console.error(error);
-            reject(error); // Reject the promise if there's an error
-        });
-    });
-}
-
-
-
 // Delete image from server
 function deleteImgUrlFromServer(imgUrl) { // Deletes image from server
     const url = new URL('http://localhost:3000/api/quizzes_delete');
@@ -164,7 +116,6 @@ function updateQuizRecordDB(formData, old_imgUrl, new_imgUrl) {
 
 // Export the functions to be used in other files if needed
 export {
-    loadQuizzesFromDB,
     deleteImgUrlFromServer,
     deleteQuizFromDB,
     addNewQuizDB,
