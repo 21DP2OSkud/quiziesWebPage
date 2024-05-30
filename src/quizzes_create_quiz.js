@@ -12,7 +12,8 @@ const {
 } = clientSide;
 
 const {
-    createOverlay
+    createOverlay,
+    closeUI
 } = ui;
 
 
@@ -183,8 +184,7 @@ function createQuizUI(){
             // Call the functions
             addNewQuizDB(formData);
             console.log(quizImageFile);
-            overlay.remove();
-            UI.remove();
+            closeUI(UI);
         }
     });
 }

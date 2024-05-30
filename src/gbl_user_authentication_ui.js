@@ -59,7 +59,7 @@ function createLogInUI() {
     passwordWrapper.appendChild(passwordToggle);
 
     submitButton.textContent = "Log In";
-    submitButton.setAttribute('class', "bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-transform duration-200 transform hover:scale-105");
+    submitButton.setAttribute('class', "bg-blue-500 hover:bg-cyan text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full");
     submitButton.setAttribute("type", "submit");
 
     noAccountLabel.textContent = "Don't have an account? Sign up";

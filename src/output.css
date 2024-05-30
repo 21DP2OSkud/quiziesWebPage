@@ -1449,8 +1449,8 @@ video {
 }
 
 .ui button:hover {
-  background: white;
   transition: 0.3s;
+  scale: 105%;
 }
 
 /* AUTHENTICATION UI */
