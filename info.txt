@@ -44,4 +44,17 @@ password: admin
 commands:
 sudo systemctl start mysql
 sudo systemctl status mysql
-    
+
+
+
+In this project is used:
+Html,
+Css,
+Tailwind css,
+js,
+NodeJS and API/DataBase libraries:
+    * MySQL2,
+    * Express,
+    * Cores,
+    * Path,
+    * Multer;

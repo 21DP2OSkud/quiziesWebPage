@@ -45,6 +45,17 @@ app.options('*', (req, res) => {
 });
 
 
+con.connect((err) => {
+    if (err) {
+        console.error('Error connecting to MySQL:', err);
+        return;
+    }
+    console.log('Connected to MySQL');
+});
+
+//
+// Server Storage 
+//
 // Set up multer storage for file uploads
 const quizImgStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -58,6 +69,72 @@ const quizImgStorage = multer.diskStorage({
         cb(null, newFilename); // Callback with the new filename
     }
 });
+
+
+//
+// Authentication methods
+//
+// Register user
+app.post('/api/register', (req, res) => {
+    const { username, email, password } = req.body;
+
+    // Hash the password before storing it (use bcrypt for hashing)
+    const bcrypt = require('bcrypt');
+    const saltRounds = 10;
+
+    bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error hashing password');
+        } else {
+            const query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+            con.query(query, [username, email, hashedPassword], (err, result) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Error registering user');
+                } else {
+                    res.status(200).send('User registered successfully');
+                }
+            });
+        }
+    });
+});
+
+
+// Login user
+app.post('/api/login', (req, res) => {
+    const { email, password } = req.body;
+
+    const query = "SELECT * FROM users WHERE email = ?";
+    con.query(query, [email], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error fetching user');
+        }
+
+        if (result.length === 0) {
+            return res.status(400).send('User not found');
+        }
+
+        const user = result[0];
+
+        // Compare the hashed password with the provided password
+        bcrypt.compare(password, user.password, (err, isMatch) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Error comparing passwords');
+            }
+
+            if (!isMatch) {
+                return res.status(400).send('Invalid credentials');
+            }
+
+            // Set up session or token here (e.g., JWT)
+            res.status(200).send('User logged in successfully');
+        });
+    });
+});
+
 
 
 //
@@ -178,5 +255,5 @@ function deleteImage(imagePath, res) {
 // Start the server
 const PORT =  process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log('Server is running on port: '+ PORT);
+    console.log(`Server is running on http://127.0.0.1:${PORT}`);
 });

@@ -95,6 +95,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
 
+    // Add event listener to the profile icon
+    const profileIcon = document.getElementById("profile-icon");
+    profileIcon.addEventListener("click", function() {
+        // Redirect to the edit profile page
+        window.location.href = `profile.html`;
+    });
+
+
 
     // Get the current page URL
     const currentPage = window.location.pathname;

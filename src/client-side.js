@@ -1,3 +1,62 @@
+//
+// Authentication methods
+//
+
+// Register new user
+function registerUser(formData) {
+    fetch('http://localhost:3000/api/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: formData.get('username'),
+            email: formData.get('email'),
+            password: formData.get('password')
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to register user');
+        }
+        console.log('User registered successfully');
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+
+
+// Login user
+function loginUser(formData) {
+    return fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        body: JSON.stringify(Object.fromEntries(formData.entries())),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(text || 'Failed to log in user');
+            });
+        }
+        return response.json().catch(() => {
+            throw new Error('Failed to parse response as JSON');
+        });
+    })
+    .then(data => {
+        console.log('Login successful:', data);
+        return data; // Return data for further processing if needed
+    });
+}
+
+
+
+//
+// Quizzes
+//
 // Delete image from server
 function deleteImgUrlFromServer(imgUrl) { // Deletes image from server
     const url = new URL('http://localhost:3000/api/quizzes_delete');
@@ -116,6 +175,9 @@ function updateQuizRecordDB(formData, old_imgUrl, new_imgUrl) {
 
 // Export the functions to be used in other files if needed
 export {
+    loginUser,
+    registerUser,
+    //
     deleteImgUrlFromServer,
     deleteQuizFromDB,
     addNewQuizDB,

@@ -4,6 +4,13 @@ const {
     closeUI,
 } = ui;
 
+import * as clientSide from './client-side.js';
+
+const { 
+    loginUser,
+    registerUser,
+} = clientSide;
+
 
 function createLogInUI() {
     createOverlay();
@@ -20,6 +27,7 @@ function createLogInUI() {
     signUpUI.appendChild(closeBtn);
 
     const form = document.createElement('form');
+    form.id = 'loginForm'; // ID of the Login form
     const h2 = document.createElement('h2');
     const emailDiv = document.createElement('div');
     const emailLabel = document.createElement('label');
@@ -40,12 +48,14 @@ function createLogInUI() {
     emailInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     emailInput.setAttribute("type", "email");
     emailInput.setAttribute("placeholder", "Enter your email");
+    emailInput.setAttribute("name", "email");
 
     passwordLabel.textContent = "Password";
     passwordLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
     passwordInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     passwordInput.setAttribute("type", "password");
     passwordInput.setAttribute("placeholder", "Enter your password");
+    passwordInput.setAttribute("name", "password");
 
     passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
     passwordToggle.classList.add("absolute", "right-3", "top-1/2", "-translate-y-3/4", "cursor-pointer");
@@ -59,7 +69,7 @@ function createLogInUI() {
     passwordWrapper.appendChild(passwordToggle);
 
     submitButton.textContent = "Log In";
-    submitButton.setAttribute('class', "bg-blue-500 hover:bg-cyan text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full");
+    submitButton.setAttribute('class', "bg-blue-600 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full");
     submitButton.setAttribute("type", "submit");
 
     noAccountLabel.textContent = "Don't have an account? Sign up";
@@ -80,8 +90,56 @@ function createLogInUI() {
     form.appendChild(passwordDiv);
     form.appendChild(submitButton);
     form.appendChild(noAccountLabel);
+
+    // Create error message element
+    const errorMessage = document.createElement('div');
+    errorMessage.id = 'loginErrorMessage';
+    errorMessage.style.display = 'none';
+    errorMessage.style.color = 'red';
+    errorMessage.style.textAlign = 'center';
+    errorMessage.style.marginTop = '10px';
+    form.appendChild(errorMessage);
+
     signUpUI.appendChild(form);
     document.body.appendChild(signUpUI);
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log('Login Form Submitted');
+        const formData = new FormData(form);
+
+        // Clear any existing error message
+        errorMessage.textContent = '';
+        errorMessage.style.display = 'none';
+
+        const emailValue = formData.get('email');
+        const passwordValue = formData.get('password');
+
+        // Validate that both inputs are filled
+        if (!emailValue || !passwordValue) {
+            errorMessage.textContent = 'Fill both inputs';
+            errorMessage.style.display = 'block';
+            return;
+        }
+
+        // Proceed with login if inputs are valid
+        loginUser(formData)
+            .then(data => {
+                // Handle successful login
+                console.log('Login successful:', data);
+                // Optionally redirect or update UI after successful login
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Update error message dynamically based on the error received
+                if (error.message.includes('User not found')) {
+                    errorMessage.textContent = 'User not found';
+                } else {
+                    errorMessage.textContent = 'Failed to log in user';
+                }
+                errorMessage.style.display = 'block';
+            });
+    });
 }
 
 
@@ -99,8 +157,8 @@ function createRegisterUI() {
     });
     registerUI.appendChild(closeBtn);
 
-    
     const form = document.createElement('form');
+    form.id = 'registerForm'; // Id of the Register form
     const h2 = document.createElement('h2');
     const usernameDiv = document.createElement('div');
     const usernameLabel = document.createElement('label');
@@ -119,86 +177,93 @@ function createRegisterUI() {
     const repeatPasswordInput = document.createElement('input');
     const repeatPasswordToggle = document.createElement('span');
     const submitButton = document.createElement('button');
-    
+
     h2.textContent = "Register";
     h2.classList.add("text-2xl", "font-bold", "mb-6", "text-center");
-    
+
     usernameLabel.textContent = "Username";
     usernameLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
     usernameInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     usernameInput.setAttribute("type", "text");
     usernameInput.setAttribute("placeholder", "Enter your username");
-    
+
     emailLabel.textContent = "Email";
     emailLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
     emailInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     emailInput.setAttribute("type", "email");
     emailInput.setAttribute("placeholder", "Enter your email");
-    
+
     passwordLabel.textContent = "Password";
     passwordLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
     passwordInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     passwordInput.setAttribute("type", "password");
     passwordInput.setAttribute("placeholder", "Enter your password");
-    
+
     repeatPasswordLabel.textContent = "Repeat Password";
     repeatPasswordLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
     repeatPasswordInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     repeatPasswordInput.setAttribute("type", "password");
     repeatPasswordInput.setAttribute("placeholder", "Repeat your password");
-    
+
     passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
     passwordToggle.classList.add("absolute", "right-3", "top-1/2", "-translate-y-3/4", "cursor-pointer");
     passwordToggle.addEventListener('click', function(){
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
     });
-    
+
     repeatPasswordToggle.innerHTML = '<i class="fas fa-eye"></i>';
     repeatPasswordToggle.classList.add("absolute", "right-3", "top-1/2", "-translate-y-3/4", "cursor-pointer");
     repeatPasswordToggle.addEventListener('click', function(){
         const type = repeatPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         repeatPasswordInput.setAttribute('type', type);
     });
-    
+
     submitButton.textContent = "Register";
-    submitButton.setAttribute('class', "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full");
+    submitButton.setAttribute('class', "bg-green-600 hover:bg-green-400 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full");
     submitButton.setAttribute("type", "submit");
-    
+
     usernameDiv.appendChild(usernameLabel);
     usernameDiv.appendChild(usernameInput);
-    
+
     emailDiv.appendChild(emailLabel);
     emailDiv.appendChild(emailInput);
-    
+
     passwordDiv.appendChild(passwordLabel);
     passwordWrapper1.classList.add("relative", "mb-3");
     passwordWrapper1.appendChild(passwordInput);
     passwordWrapper1.appendChild(passwordToggle);
     passwordDiv.appendChild(passwordWrapper1);
-    
+
     repeatPasswordDiv.appendChild(repeatPasswordLabel);
     passwordWrapper2.classList.add("relative", "mb-3");
     passwordWrapper2.appendChild(repeatPasswordInput);
     passwordWrapper2.appendChild(repeatPasswordToggle);
     repeatPasswordDiv.appendChild(passwordWrapper2);
-    
+
     form.appendChild(h2);
     form.appendChild(usernameDiv);
     form.appendChild(emailDiv);
     form.appendChild(passwordDiv);
     form.appendChild(repeatPasswordDiv);
     form.appendChild(submitButton);
-    
-    registerUI.appendChild(form);
-    
-    document.body.appendChild(registerUI);    
-}
 
+    registerUI.appendChild(form);
+    document.body.appendChild(registerUI);
+
+    // Add event listener for register form submission
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log('Register Form Submitted');
+        const formData = new FormData(form);
+        registerUser(formData);
+    });
+}
 
 function signOut() {
-    
+    // Implement sign out functionality here
 }
+
 
 
 export {
