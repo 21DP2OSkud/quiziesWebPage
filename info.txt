@@ -33,9 +33,10 @@ https://www.youtube.com/watch?v=vrj9AohVhPA&ab_channel=NsquaredCoding
 Libraries:
 npm install mysql2
 sudo npm install express
+npm install express-session
 sudo nmp install cors
 sudo npm install moment
-npm install bcrypt express-session
+npm install bcrypt
 
 -------------Start DB-------------
 password: admin

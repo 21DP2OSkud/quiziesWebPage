@@ -4,6 +4,12 @@
 
 // Register new user
 function registerUser(formData) {
+    // Log the form data to ensure it's correct
+    console.log('Registering user with the following data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+
     fetch('http://localhost:3000/api/register', {
         method: 'POST',
         headers: {
@@ -31,24 +37,21 @@ function registerUser(formData) {
 function loginUser(formData) {
     return fetch('http://localhost:3000/api/login', {
         method: 'POST',
-        body: JSON.stringify(Object.fromEntries(formData.entries())),
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+            email: formData.get('email'),
+            password: formData.get('password')
+        })
     })
     .then(response => {
         if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(text || 'Failed to log in user');
+            return response.json().then(errorData => {
+                throw new Error(errorData.error);
             });
         }
-        return response.json().catch(() => {
-            throw new Error('Failed to parse response as JSON');
-        });
-    })
-    .then(data => {
-        console.log('Login successful:', data);
-        return data; // Return data for further processing if needed
+        return response.json();
     });
 }
 

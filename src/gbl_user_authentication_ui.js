@@ -11,20 +11,28 @@ const {
     registerUser,
 } = clientSide;
 
+import * as userDropDownMenu from './gbl_user_drop_down.js';
+
+const {
+    updateUserDropdown,
+} = userDropDownMenu;
+
+
+
 
 function createLogInUI() {
     createOverlay();
-    const signUpUI = document.createElement('div');
-    signUpUI.setAttribute('class', "ui authentication-ui bg-white p-8 rounded-lg shadow-lg w-96 h-auto mx-auto my-12 relative");
+    const logInUI = document.createElement('div');
+    logInUI.setAttribute('class', "ui authentication-ui bg-white p-8 rounded-lg shadow-lg w-96 h-auto mx-auto my-12 relative");
 
     const closeBtn = document.createElement('button');
     closeBtn.setAttribute('class', "absolute top-2 right-2 text-gray-500 hover:text-gray-700");
     closeBtn.textContent = "✖";
     closeBtn.addEventListener('click', function(){
         console.log("closing login ui");
-        closeUI(signUpUI);
+        closeUI(logInUI);
     });
-    signUpUI.appendChild(closeBtn);
+    logInUI.appendChild(closeBtn);
 
     const form = document.createElement('form');
     form.id = 'loginForm'; // ID of the Login form
@@ -75,7 +83,7 @@ function createLogInUI() {
     noAccountLabel.textContent = "Don't have an account? Sign up";
     noAccountLabel.setAttribute('class', "block text-center text-blue-700 text-sm font-bold mt-4 cursor-pointer hover:text-blue-400");
     noAccountLabel.addEventListener("click", function() {
-        closeUI(signUpUI);
+        closeUI(logInUI);
         createRegisterUI();
     });
 
@@ -100,8 +108,8 @@ function createLogInUI() {
     errorMessage.style.marginTop = '10px';
     form.appendChild(errorMessage);
 
-    signUpUI.appendChild(form);
-    document.body.appendChild(signUpUI);
+    logInUI.appendChild(form);
+    document.body.appendChild(logInUI);
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -127,6 +135,10 @@ function createLogInUI() {
             .then(data => {
                 // Handle successful login
                 console.log('Login successful:', data);
+                const userProfile = data.userProfile;
+                updateUserDropdown(true, userProfile);
+                closeUI(logInUI);
+                console.log(userProfile);
                 // Optionally redirect or update UI after successful login
             })
             .catch(error => {
@@ -186,24 +198,28 @@ function createRegisterUI() {
     usernameInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     usernameInput.setAttribute("type", "text");
     usernameInput.setAttribute("placeholder", "Enter your username");
+    usernameInput.setAttribute("name", "username");
 
     emailLabel.textContent = "Email";
     emailLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
     emailInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     emailInput.setAttribute("type", "email");
     emailInput.setAttribute("placeholder", "Enter your email");
+    emailInput.setAttribute("name", "email");
 
     passwordLabel.textContent = "Password";
     passwordLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
     passwordInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     passwordInput.setAttribute("type", "password");
     passwordInput.setAttribute("placeholder", "Enter your password");
+    passwordInput.setAttribute("name", "password");
 
     repeatPasswordLabel.textContent = "Repeat Password";
     repeatPasswordLabel.classList.add("block", "text-gray-700", "text-sm", "font-bold", "mb-2");
     repeatPasswordInput.classList.add("shadow", "appearance-none", "border", "rounded", "w-full", "py-2", "px-3", "text-gray-700", "mb-3", "leading-tight", "focus:outline-none", "focus:shadow-outline");
     repeatPasswordInput.setAttribute("type", "password");
     repeatPasswordInput.setAttribute("placeholder", "Repeat your password");
+    repeatPasswordInput.setAttribute("name", "repeatPassword");
 
     passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
     passwordToggle.classList.add("absolute", "right-3", "top-1/2", "-translate-y-3/4", "cursor-pointer");
@@ -256,9 +272,16 @@ function createRegisterUI() {
         e.preventDefault();
         console.log('Register Form Submitted');
         const formData = new FormData(form);
+        
+        // Log the form data
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
         registerUser(formData);
     });
 }
+
 
 function signOut() {
     // Implement sign out functionality here

@@ -2,7 +2,7 @@
 let quizzesData = null;
 let quizzesPromise = null;
 
-export function loadQuizzesFromDB() {
+function loadQuizzesFromDB() {
     if (quizzesData) {
         return Promise.resolve(quizzesData);
     }
@@ -28,4 +28,8 @@ export function loadQuizzesFromDB() {
             });
     }
     return quizzesPromise;
+}
+
+export {
+    loadQuizzesFromDB,
 }

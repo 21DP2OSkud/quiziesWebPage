@@ -7,6 +7,7 @@ const path = require('path'); //module provides utilities for working with file 
 const multer = require('multer'); // For handling file uploads
 const moment = require('moment'); // For date and time
 const fs = require('fs'); // For reading and writing files
+const bcrypt = require('bcrypt');
 
 
 /*
@@ -34,6 +35,15 @@ const con = mysql.createConnection({
 const app = express();
 app.use(cors()); //Lai strādātu citi porti
 app.use(express.json());
+
+
+// Initialize session middleware
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true } // Note: Set secure to true if using HTTPS
+}));
 
 
 // Add middleware to handle OPTIONS requests for CORS
@@ -74,29 +84,36 @@ const quizImgStorage = multer.diskStorage({
 //
 // Authentication methods
 //
-// Register user
+// User registration endpoint
 app.post('/api/register', (req, res) => {
     const { username, email, password } = req.body;
+    const saltRounds = 10; // Define saltRounds here
 
-    // Hash the password before storing it (use bcrypt for hashing)
-    const bcrypt = require('bcrypt');
-    const saltRounds = 10;
+    // Log the request body
+    console.log('Received username:', username);
+    console.log('Received email:', email);
+    console.log('Received password:', password);
 
+    // Check if email and password are provided
+    if (!email || !password) {
+        return res.status(400).send('Email and password are required');
+    }
+
+    // Hash the password
     bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
         if (err) {
-            console.error(err);
-            res.status(500).send('Error hashing password');
-        } else {
-            const query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-            con.query(query, [username, email, hashedPassword], (err, result) => {
-                if (err) {
-                    console.error(err);
-                    res.status(500).send('Error registering user');
-                } else {
-                    res.status(200).send('User registered successfully');
-                }
-            });
+            console.error('Error hashing password:', err);
+            return res.status(500).send('Internal server error');
         }
+
+        const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+        con.query(query, [username, email, hashedPassword], (err, result) => {
+            if (err) {
+                console.error('Error inserting user:', err);
+                return res.status(500).send('Internal server error');
+            }
+            res.status(201).send('User registered successfully');
+        });
     });
 });
 
@@ -105,35 +122,54 @@ app.post('/api/register', (req, res) => {
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
 
-    const query = "SELECT * FROM users WHERE email = ?";
-    con.query(query, [email], (err, result) => {
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const query = 'SELECT * FROM users WHERE email = ?';
+    con.query(query, [email], (err, results) => {
         if (err) {
-            console.error(err);
-            return res.status(500).send('Error fetching user');
+            console.error('Error querying the database:', err);
+            return res.status(500).json({ error: 'Internal server error' });
         }
 
-        if (result.length === 0) {
-            return res.status(400).send('User not found');
+        if (results.length === 0) {
+            return res.status(400).json({ error: 'Invalid email or password' });
         }
 
-        const user = result[0];
-
-        // Compare the hashed password with the provided password
+        const user = results[0];
         bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) {
-                console.error(err);
-                return res.status(500).send('Error comparing passwords');
+                console.error('Error comparing passwords:', err);
+                return res.status(500).json({ error: 'Internal server error' });
             }
 
             if (!isMatch) {
-                return res.status(400).send('Invalid credentials');
+                return res.status(400).json({ error: 'Invalid email or password' });
             }
 
-            // Set up session or token here (e.g., JWT)
-            res.status(200).send('User logged in successfully');
+            // Log the user login with the current date and time
+            const loginTime = new Date().toLocaleString();
+            console.log(`User "${email}" just logged in at ${loginTime}`);
+
+            // Return user data along with success message
+            const userProfile = {
+                user_id: user.user_id,
+                username: user.username,
+                email: user.email,
+                created_at: user.created_at,
+                profile_image_url: user.profile_image_url
+            };
+            res.status(200).json({ message: 'Login successful', userProfile });
         });
     });
 });
+
+
+//
+// Session
+//
+
 
 
 
