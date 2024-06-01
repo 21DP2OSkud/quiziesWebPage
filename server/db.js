@@ -8,6 +8,7 @@ const multer = require('multer'); // For handling file uploads
 const moment = require('moment'); // For date and time
 const fs = require('fs'); // For reading and writing files
 const bcrypt = require('bcrypt');
+const colors = require('colors'); // Colors
 
 
 /*
@@ -63,9 +64,12 @@ con.connect((err) => {
     console.log('Connected to MySQL');
 });
 
+
 //
 // Server Storage 
 //
+
+
 // Set up multer storage for file uploads
 const quizImgStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -84,6 +88,8 @@ const quizImgStorage = multer.diskStorage({
 //
 // Authentication methods
 //
+
+
 // User registration endpoint
 app.post('/api/register', (req, res) => {
     const { username, email, password } = req.body;
@@ -150,7 +156,13 @@ app.post('/api/login', (req, res) => {
 
             // Log the user login with the current date and time
             const loginTime = new Date().toLocaleString();
-            console.log(`User "${email}" just logged in at ${loginTime}`);
+            console.log(`User "${email}" just logged in at ${loginTime}`.green.italic);
+
+            // Remove quotes from profile_image_url if present
+            let profileImageUrl = user.profile_image_url;
+            if (profileImageUrl.startsWith("'") && profileImageUrl.endsWith("'")) {
+                profileImageUrl = profileImageUrl.slice(1, -1);
+            }
 
             // Return user data along with success message
             const userProfile = {
@@ -158,19 +170,77 @@ app.post('/api/login', (req, res) => {
                 username: user.username,
                 email: user.email,
                 created_at: user.created_at,
-                profile_image_url: user.profile_image_url
+                profile_image_url: profileImageUrl
             };
+            // Create session and store user data
+            req.session.user = userProfile; // Store user profile in session | localStorage
             res.status(200).json({ message: 'Login successful', userProfile });
         });
     });
 });
 
 
+// Logout user
+app.post('/api/logout', (req, res) => {
+    const { email } = req.body; // Get email from request body
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            res.status(200).json({ message: 'Logout successful' });
+            const logOutTime = new Date().toLocaleString();
+            console.log(`User "${email}" just logged out at ${logOutTime}`.red.dim);
+        }
+    });
+});
+
+
 //
-// Session
+// Profile
 //
 
 
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
+//
+// Session protect routes
+//
+
+
+
+app.get('/api/protected-route', (req, res) => {
+    if (req.session.user) {
+        // User is authenticated, allow access
+        res.status(200).json({ message: 'Access granted' });
+    } else {
+        // User is not authenticated, deny access
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+});
+
+
+// Middleware to protect routes
+const protectRoute = (req, res, next) => {
+    if (req.session.user) {
+        // User is authenticated, allow access
+        next();
+    } else {
+        // User is not authenticated, return unauthorized error
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+};
+
+
+// Example protected route
+app.get('/api/protected-route', protectRoute, (req, res) => {
+    res.status(200).json({ message: 'Access granted' });
+});
 
 
 //

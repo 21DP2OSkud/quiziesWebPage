@@ -52,6 +52,11 @@ function loginUser(formData) {
             });
         }
         return response.json();
+    })
+    .then(data => {
+        // Store session data in local storage
+        localStorage.setItem('userProfile', JSON.stringify(data.userProfile));
+        return data;
     });
 }
 

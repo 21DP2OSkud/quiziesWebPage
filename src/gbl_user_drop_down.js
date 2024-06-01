@@ -10,61 +10,61 @@ function updateUserDropdown(isLoggedIn, userProfile) {
     // Get dropdown elements
     const dropdown = document.getElementById('user-dropdown');
     const profileImg = document.querySelector('#user-menu-button img');
-    
 
     // Function to update dropdown menu for logged in user
     function updateLoggedInDropdown() {
         console.log(userProfile);
-    
+
         // Function to remove additional quotes from the URL
         function cleanProfileImageUrl(url) {
             return url.replace(/^['"](.*)['"]$/, '$1');
         }
-    
+
         // Clean the profile image URL if necessary
         const cleanedProfileImageUrl = cleanProfileImageUrl(userProfile.profile_image_url);
-    
+
         // Create elements for dropdown menu
         const profileNameSpan = document.createElement('span');
         profileNameSpan.textContent = userProfile.username;
         profileNameSpan.classList.add('block', 'text-sm', 'text-gray-900', 'dark:text-white', 'text-center'); // Center text
-    
+
         const profileEmailSpan = document.createElement('span');
         profileEmailSpan.textContent = userProfile.email;
         profileEmailSpan.classList.add('block', 'text-sm', 'text-gray-500', 'truncate', 'dark:text-gray-400', 'text-center'); // Center text
-    
+
         const profileSettingsLink = document.createElement('a');
         profileSettingsLink.href = '#';
-        profileSettingsLink.textContent = 'Settings';
+        profileSettingsLink.textContent = 'Edit Profile';
+        profileSettingsLink.id = 'btn_edit_profile';
         profileSettingsLink.classList.add('block', 'px-4', 'py-2', 'text-sm', 'text-gray-700', 'hover:bg-gray-100', 'dark:hover:bg-gray-600', 'dark:text-gray-200', 'dark:hover:text-white', 'text-center'); // Center text
-    
+
         const signOutLink = document.createElement('a');
         signOutLink.href = '#';
         signOutLink.textContent = 'Sign out';
         signOutLink.id = 'btn_sign_out';
         signOutLink.classList.add('block', 'px-4', 'py-2', 'text-sm', 'text-gray-700', 'hover:bg-gray-100', 'dark:hover:bg-gray-600', 'dark:text-gray-200', 'dark:hover:text-white', 'text-center'); // Center text
-    
+
         const profileList = document.createElement('ul');
         profileList.classList.add('py-2');
         profileList.setAttribute('aria-labelledby', 'user-menu-button');
-    
+
         const settingsListItem = document.createElement('li');
         settingsListItem.appendChild(profileSettingsLink);
-    
+
         const signOutListItem = document.createElement('li');
         signOutListItem.appendChild(signOutLink);
-    
+
         profileList.appendChild(settingsListItem);
         profileList.appendChild(signOutListItem);
-    
+
         // Clear existing dropdown content
         dropdown.textContent = '';
-    
+
         // Append elements to dropdown
         dropdown.appendChild(profileNameSpan);
         dropdown.appendChild(profileEmailSpan);
         dropdown.appendChild(profileList);
-    
+
         // Update profile image source
         profileImg.src = cleanedProfileImageUrl;
     }
@@ -101,6 +101,7 @@ function updateUserDropdown(isLoggedIn, userProfile) {
 
     // Get the buttons for sign out, log in, and sign up
     const btnSignOut = document.getElementById('btn_sign_out');
+    const btnEditProfile = document.getElementById('btn_edit_profile');
     const btnLogIn = document.getElementById('btn_log_in');
     const btnRegister = document.getElementById('btn_register');
 
@@ -108,7 +109,7 @@ function updateUserDropdown(isLoggedIn, userProfile) {
     if (btnSignOut) {
         btnSignOut.addEventListener('click', function() {
             console.log("Sign out processing");
-            userAuthentication.signOut();
+            signOut();
         });
     }
 
@@ -127,10 +128,16 @@ function updateUserDropdown(isLoggedIn, userProfile) {
             createRegisterUI();
         });
     }
+
+
+    if (btnEditProfile) {
+        btnEditProfile.addEventListener('click', function() {
+            window.location.href = `profile-edit.html`;
+        });
+    }
 }
 
 updateUserDropdown(false, null);
-
 
 export {
     updateUserDropdown,

@@ -283,8 +283,33 @@ function createRegisterUI() {
 }
 
 
+
 function signOut() {
-    // Implement sign out functionality here
+    const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+    const email = userProfile ? userProfile.email : ''; // Get email from local storage
+
+    fetch('http://localhost:3000/api/logout', { // Ensure the URL points to the correct server endpoint
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }), // Send email in the request body
+    })
+    .then(response => {
+        if (response.ok) {
+            // Remove user profile from local storage
+            localStorage.removeItem('userProfile');
+            window.location.href = 'index.html'; // Redirect to home or login page after logout
+        } else {
+            return response.json().then(error => {
+                throw new Error(error.error);
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Logout failed:', error);
+        // Handle logout failure (e.g., show an error message)
+    });
 }
 
 

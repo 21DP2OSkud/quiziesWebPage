@@ -37,6 +37,8 @@ npm install express-session
 sudo nmp install cors
 sudo npm install moment
 npm install bcrypt
+npm install chalk
+npm install colors
 
 -------------Start DB-------------
 password: admin
