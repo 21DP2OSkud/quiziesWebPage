@@ -1,4 +1,8 @@
-// profile.js
+import * as session from './gbl_check_session.js';
+const {
+    checkSession,
+} = session;
+
 function loadProfilePage() {
     document.addEventListener('DOMContentLoaded', function() {
         const currentPage = window.location.pathname;
@@ -64,4 +68,9 @@ function loadProfilePage() {
     });
 }
 
-loadProfilePage();
+if (checkSession()) {
+    loadProfilePage();
+}
+else {
+    console.log('Log in to see profile!');
+}

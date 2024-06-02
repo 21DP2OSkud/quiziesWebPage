@@ -1,3 +1,10 @@
+import * as session from './gbl_check_session.js';
+const {
+    checkSession,
+} = session;
+
+
+
 //
 // Authentication methods
 //
@@ -135,19 +142,27 @@ function deleteQuizFromDB(formData) {
 
 // Save uploaded quiz to db
 function addNewQuizDB(formData) {
-    fetch('http://localhost:3000/api/quizzes', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to add quiz');
-        }
-        console.log('Quiz added successfully');
-    })
-    .catch(error => {
-        console.error(error);
-    });
+    const sessionData = checkSession(); // session data
+    if (sessionData.session) {
+        const user_id = sessionData.userProfile.user_id; // gets user_id from session data
+        formData.append('user_id', user_id); // append user_id to formData
+        fetch('http://localhost:3000/api/quizzes', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to add quiz');
+            }
+            console.log('Quiz added successfully');
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    } else {
+        console.error('No user session found');
+        alert('Please log in to create a quiz.');
+    }
 }
 
 

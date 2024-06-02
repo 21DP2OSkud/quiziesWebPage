@@ -327,8 +327,9 @@ app.get('/api/protected-route', protectRoute, (req, res) => {
 // Define route for handling POST requests to /api/quizzes
 app.post('/api/quizzes', uploadedImgPath.single('image'), (req, res) => {
 //.single() function indicates that only one file will be uploaded. By default, Multer, the file uploading middleware for Express, expects the name attribute of the form field that contains the file to be image. So, uploadedImgPath.single() would expect a file input field with the name attribute set to image. If you have a different name for your file input field, you should pass that name as an argument to the single() function. For example, if your file input field has the name myImage, you would use uploadedImgPath.single('myImage').
-    let { quiz_id, imgUrl, title, description } = req.body;
+    let { quiz_id, imgUrl, title, description, user_id } = req.body;
     console.log(req.body);
+
     // Check if a file is uploaded in the request, if so, update imgUrl
     if (req.file) {
         imgUrl = req.file.path;
@@ -369,8 +370,8 @@ app.post('/api/quizzes', uploadedImgPath.single('image'), (req, res) => {
         });
     }
     else if (quiz_id === undefined) { // if post request came without quiz_id ----> INSERT
-        const addNewQuizQuery = "INSERT INTO quizzes (imgUrl, title, description, created_at) VALUES (?, ?, ?, ?)";
-        con.query(addNewQuizQuery, [imgUrl, title, description, createdAt], function(err, result) {
+        const addNewQuizQuery = "INSERT INTO quizzes (imgUrl, title, description, creator_id, created_at) VALUES (?, ?, ?, ?, ?)";
+        con.query(addNewQuizQuery, [imgUrl, title, description, user_id, createdAt], function(err, result) {
             if (err) {
                 console.error(err);
                 res.status(500).send('Error adding quiz');

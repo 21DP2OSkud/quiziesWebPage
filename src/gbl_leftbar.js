@@ -1,3 +1,14 @@
+import * as session from './gbl_check_session.js';
+const {
+    checkSession,
+} = session;
+
+
+
+let isHovered = false;
+let labelHovered = false;
+let collapseTimeout;
+
 function addLeftBarIcon() {
     // Const variable declarations
     const navbar = document.getElementById('nav-bar');
@@ -11,9 +22,18 @@ function addLeftBarIcon() {
 
     const labelsDiv = document.createElement('div');
 
-    const label1 = createLeftBarLabel(1, 'My quizzes');
-    const label2 = createLeftBarLabel(2, 'settings');
-    const label3 = createLeftBarLabel(3, 'Label 3');
+    const myQuizzesLabel = createLeftBarLabel(1, 'My quizzes');
+    const dashboardLabel = createLeftBarLabel(2, 'Dashboard');
+    dashboardLabel.addEventListener('click', function () {
+        if (checkSession()) {
+            window.location.href = 'http://127.0.0.1:5500/src/dashboard-template.html';
+        }
+        else {
+            alert('Login to see the dashboard');
+        }
+    });
+    const settingLabel = createLeftBarLabel(3, 'Settings');
+
 
     // Setting attributes
     leftBarDiv.setAttribute('id', 'leftbar');
@@ -39,9 +59,9 @@ function addLeftBarIcon() {
     leftBarIcon.appendChild(leftBarIconSVG);
     iconDiv.appendChild(leftBarIcon);
 
-    labelsDiv.appendChild(label1);
-    labelsDiv.appendChild(label2);
-    labelsDiv.appendChild(label3);
+    labelsDiv.appendChild(myQuizzesLabel);
+    labelsDiv.appendChild(dashboardLabel);
+    labelsDiv.appendChild(settingLabel);
 
     leftBarDiv.appendChild(iconDiv);
     leftBarDiv.appendChild(hr);
@@ -49,43 +69,68 @@ function addLeftBarIcon() {
     navbar.appendChild(leftBarDiv);
 
     // Adding event listeners
-    leftBarDiv.addEventListener('mouseover', expandLeftBar);
-    leftBarDiv.addEventListener('mouseout', collapseLeftBar);
+    iconDiv.addEventListener('mouseover', expandLeftBar);
+    iconDiv.addEventListener('mouseout', collapseLeftBar);
 
     // Adding event listeners to labels
     const labels = document.querySelectorAll('.leftbar-label');
     labels.forEach(label => {
-        label.addEventListener('mouseover', expandLeftBarFully);
-        label.addEventListener('mouseout', collapseLeftBar);
+        label.addEventListener('mouseover', () => {
+            labelHovered = true;
+            clearTimeout(collapseTimeout);
+            expandLeftBarFully();
+        });
+        label.addEventListener('mouseout', () => {
+            labelHovered = false;
+            collapseTimeout = setTimeout(() => {
+                collapseLeftBar();
+            }, 500); // Wait for 0.5 second before collapsing
+        });
+    });
+
+    // Add mouse event listener to left bar
+    leftBarDiv.addEventListener('mouseenter', () => {
+        isHovered = true;
+        expandLeftBar();
+    });
+
+    leftBarDiv.addEventListener('mouseleave', () => {
+        isHovered = false;
+        if (!labelHovered) {
+            clearTimeout(collapseTimeout);
+            collapseLeftBar();
+        }
     });
 }
-
 
 function createLeftBarLabel(id, text) {
     const label = document.createElement('div');
     label.textContent = text;
     label.setAttribute('class', 'leftbar-label');
-    label.setAttribute('id', 'label-'+id);
+    label.setAttribute('id', 'label-' + id);
     return label;
 }
 
 function expandLeftBar() {
     const leftBar = document.getElementById('leftbar');
-    leftBar.style.width = '16.7%'; 
+    leftBar.style.width = '12.5%'; 
     showLabels();
 }
 
-//nestrada
 function expandLeftBarFully() {
     const leftBar = document.getElementById('leftbar');
-    leftBar.style.width = '25%';
+    leftBar.style.width = '18.75%';
     showLabels();
 }
 
 function collapseLeftBar() {
     const leftBar = document.getElementById('leftbar');
-    leftBar.style.width = '64px';
-    hideLabels();
+    if (!isHovered && !labelHovered) {
+        leftBar.style.width = '64px';
+        hideLabels();
+    } else {
+        leftBar.style.width = '12.5%'; // Adjust the width after delay
+    }
 }
 
 function showLabels() {

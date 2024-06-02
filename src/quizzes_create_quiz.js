@@ -1,9 +1,11 @@
 // Import the functions to be used in other files if needed
-import * as clientSide from './client-side.js';
-import * as ui from './gbl_create_ui.js';
-
+import * as session from './gbl_check_session.js';
 const {
-    loadQuizzesFromDB,
+    checkSession,
+} = session;
+
+import * as clientSide from './client-side.js';
+const {
     deleteImgUrlFromServer,
     deleteQuizFromDB,
     addNewQuizDB,
@@ -11,6 +13,7 @@ const {
     updateQuizRecordDB
 } = clientSide;
 
+import * as ui from './gbl_create_ui.js';
 const {
     createOverlay,
     closeUI
@@ -55,8 +58,13 @@ function createLoadedQuizzes(id, imgPath, title, description) {
     newQuizDescription.appendChild(newQuizTitle);
     newQuiz.appendChild(newQuizImg);
     newQuiz.appendChild(newQuizDescription);
-    btn_editQuiz.appendChild(btn_editQuizIcon);
-    newQuiz.appendChild(btn_editQuiz);
+    if (checkSession()) {
+        btn_editQuiz.appendChild(btn_editQuizIcon);
+        newQuiz.appendChild(btn_editQuiz);
+    }
+    else {
+        console.log("Edit button not available");
+    }
     quizParentDiv.appendChild(newQuiz);
 }
 
@@ -123,7 +131,7 @@ function createQuizUI(){
     btn_closeUI.setAttribute("class", "rounded-lg px-8 py-1 mx-4");
     btn_closeUI.textContent = "close";
     btn_closeUI.addEventListener("click", function() {
-        closeCreateQuizUI();
+        closeUI(UI);
     });
     /* child of btnDiv */
     const btn_addQuestions = document.createElement("button");
@@ -161,8 +169,6 @@ function createQuizUI(){
 
 
     btn_addQuestions.addEventListener("click", function() {
-        fileName = "#quiz-edit.html";
-        console.log(fileName);
         alert("Next you will need to select which type of quiz you are going to create");
     });
 
@@ -190,17 +196,17 @@ function createQuizUI(){
 }
 
 
-function closeCreateQuizUI() {
-    // Remove both the "create-quiz-ui" div and the overlay div
-    document.getElementsByClassName("create-quiz-ui")[0].remove();
-    document.getElementsByClassName("overlay")[0].remove();
-}
-
-
+document.getElementById("btn-create-quiz").addEventListener("click", function() {
+    if (checkSession()) {
+        createQuizUI();
+    }
+    else {
+        alert("Login to create quizzes");
+    }
+});
 
 
 //
 export {
     createLoadedQuizzes,
-    createQuizUI
 };

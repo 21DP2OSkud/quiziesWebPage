@@ -1,16 +1,10 @@
 // Import the functions to be used in other files if needed
+import * as session from './gbl_check_session.js';
+const {
+    checkSession,
+} = session;
+
 import * as clientSide from './client-side.js';
-import * as ui from './gbl_create_ui.js';
-import * as create_quiz from './quizzes_create_quiz.js';
-
-const {
-    createOverlay,
-} = ui;
-
-const {
-    createQuizUI,
-} = create_quiz
-
 const {
     deleteImgUrlFromServer,
     deleteQuizFromDB,
@@ -18,6 +12,12 @@ const {
     updateQuizRecordDataDB,
     updateQuizRecordDB,
 } = clientSide;
+
+import * as ui from './gbl_create_ui.js';
+const {
+    createOverlay,
+} = ui;
+
 
 //
 function createEditQuizUI(record) {
@@ -308,26 +308,25 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error loading quizzes:', error);
         });
 
-    document.getElementById("btn-create-quiz").addEventListener("click", function() {
-        createQuizUI();
-    });
 
     function addEditButtonEventListeners(data_local, idsArray) {
         let ids = idsArray || [];
 
         ids.forEach(quizID => {
-            document.getElementById("edit-quiz-" + quizID).addEventListener("click", function() {
-                console.log(data_local);
-
-                const record = data_local.find(item => item.quiz_id === quizID);
-                if (record) {
-                    createEditQuizUI(record);
-                    console.log("Quiz edit button with id: " + quizID + " was pressed!");
-                    console.log(record);
-                } else {
-                    console.log("Quiz with id " + quizID + " not found.");
-                }
-            });
+            if (checkSession()) {
+                document.getElementById("edit-quiz-" + quizID).addEventListener("click", function() {
+                    console.log(data_local);
+    
+                    const record = data_local.find(item => item.quiz_id === quizID);
+                    if (record) {
+                        createEditQuizUI(record);
+                        console.log("Quiz edit button with id: " + quizID + " was pressed!");
+                        console.log(record);
+                    } else {
+                        console.log("Quiz with id " + quizID + " not found.");
+                    }
+                });
+            }
         });
     }
 });

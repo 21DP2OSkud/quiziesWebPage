@@ -1,17 +1,20 @@
+import * as session from './gbl_check_session.js';
+const {
+    checkSession,
+} = session;
+
 import * as userDropDownMenu from './gbl_user_drop_down.js';
 const {
     updateUserDropdown,
 } = userDropDownMenu;
 
-import * as userProfileDisplay from './profile.js'
-const {
-    loadProfilePage,
-} = userProfileDisplay;
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const userProfile = JSON.parse(localStorage.getItem('userProfile'));
     
     // Add event listener to the profile icon
+
     const profileIcon = document.getElementById("profile-icon");
     if (userProfile) {
         profileIcon.addEventListener("click", function() {
@@ -37,15 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Check session on page load
-    function checkSession() {
-        const userProfile = JSON.parse(localStorage.getItem('userProfile'));
-        if (userProfile) {
-            updateUserDropdown(true, userProfile);
-        } else {
-            updateUserDropdown(false, null);
-        }
-    }
 
     // Define routes and their corresponding IDs
     const routes = {
@@ -74,5 +68,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Call checkSession on page load
-    checkSession();
+    const sessionData = checkSession();
+
+    if (sessionData.session) {
+        updateUserDropdown(true, sessionData.userProfile);
+        console.log("Session: ", sessionData.session);
+    } else {
+        updateUserDropdown(false, null);
+        console.log("Session: false");
+    }
 });
