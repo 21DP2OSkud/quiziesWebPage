@@ -41,7 +41,7 @@ function loginUser(formData) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            email: formData.get('email'),
+            email   : formData.get('email'),
             password: formData.get('password')
         })
     })
@@ -60,11 +60,35 @@ function loginUser(formData) {
     });
 }
 
+//
+// Profile
+//
+
+
+function updateUserProfileDB(formData) {
+    return fetch('http://localhost:3000/api/update-user-profile', {
+        method: 'POST',
+        body: formData, // Send the FormData containing the updated user profile data
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update user profile');
+        }
+        return response.text();
+    })
+    .catch(error => {
+        console.error('Failed to update user profile:', error);
+        throw error; // Propagate the error to the caller if needed
+    });
+}
+
 
 
 //
 // Quizzes
 //
+
+
 // Delete image from server
 function deleteImgUrlFromServer(imgUrl) { // Deletes image from server
     const url = new URL('http://localhost:3000/api/quizzes_delete');
@@ -185,6 +209,8 @@ function updateQuizRecordDB(formData, old_imgUrl, new_imgUrl) {
 export {
     loginUser,
     registerUser,
+    //
+    updateUserProfileDB,
     //
     deleteImgUrlFromServer,
     deleteQuizFromDB,

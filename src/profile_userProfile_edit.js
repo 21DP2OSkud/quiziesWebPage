@@ -1,3 +1,8 @@
+import * as clientSide from './client-side.js';
+const {
+    updateUserProfileDB,
+} = clientSide;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Retrieve user profile data from localStorage
     const userProfile = JSON.parse(localStorage.getItem('userProfile'));
@@ -64,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveChangesButton = document.createElement('button');
     saveChangesButton.classList.add('bg-blue-500', 'hover:bg-blue-700', 'text-white', 'font-bold', 'py-2', 'px-4', 'rounded');
     saveChangesButton.textContent = 'Save Changes';
-    saveChangesButton.addEventListener('click', saveChanges);
+    saveChangesButton.addEventListener('click', () => saveChanges(profileImageInput, profileUsername));
 
     // Create cancel button dynamically
     const cancelButton = document.createElement('button');
@@ -86,7 +91,8 @@ document.addEventListener('DOMContentLoaded', function() {
     profileContainer.appendChild(buttonsContainer);
 
     // Append profile container to the body or any other container in your HTML
-    document.body.appendChild(profileContainer);
+    const pageContainer = document.getElementById('page-content');
+    pageContainer.appendChild(profileContainer);
 
     // Function to handle image upload
     function handleImageUpload(event) {
@@ -109,13 +115,62 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to update user profile in localStorage
+    function updateUserProfileInLocalStorage(newProfile) {
+        localStorage.setItem('userProfile', JSON.stringify(newProfile));
+    }
+
     // Function to handle saving changes
-    function saveChanges() {
-        // Add logic to save changes here
-    }   
+    function saveChanges(profileImageInput, profileUsername) {
+        const newUsername = profileUsername.textContent;
+        const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+
+        userProfile.username = newUsername;
+
+        const formData = new FormData();
+        formData.append('user_id', userProfile.user_id);
+        formData.append('username', newUsername);
+        formData.append('oldProfileImageUrl', userProfile.profile_image_url);
+
+        // Generate timestamp
+        const timestamp = Date.now();
+        formData.append('timestamp', timestamp); // Pass timestamp to the server
+
+        if (profileImageInput.files.length > 0) {
+            const newProfileImage = profileImageInput.files[0];
+            formData.append('profile_image', newProfileImage);
+            const originalName = newProfileImage.name.split('.').slice(0, -1).join('.'); // Extracting original filename without extension png/jpg/jpeg
+            const extension = newProfileImage.name.split('.').pop(); // Extract extension from original filename
+            const filename = `${userProfile.username}-${originalName}-${timestamp}.${extension}`;
+            userProfile.profile_image_url = `../server/users_profile_pictures/${filename}`;
+        }
+
+        // Replace backward slashes with forward slashes
+        userProfile.profile_image_url = userProfile.profile_image_url.replace(/\\/g, '/');
+
+        updateUserProfileInLocalStorage(userProfile);
+
+        updateUserProfileDB(formData)
+            .then(response => {
+                const { profileImageUrl } = response.data; // Retrieve profile image URL from server response
+                if (profileImageUrl) {
+                    console.log('Profile updated successfully!');
+                    // Optionally, you can redirect or perform any other actions here
+                } else {
+                    console.error('Failed to update profile: Missing profileImageUrl in the server response');
+                    // Optionally, you can display an error message to the user
+                }
+            })
+            .catch(error => {
+                console.error('Failed to update profile:', error);
+                // Optionally, you can display an error message to the user
+            });
+    }
+
 
     // Function to handle canceling changes
     function cancelChanges() {
-        // Add logic to cancel changes here
+        console.log('Profile edit cancelled');
+        window.location.href = 'http://127.0.0.1:5500/src/profile-template.html';
     }
 });

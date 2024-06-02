@@ -5,7 +5,7 @@ const {
 
 import * as userProfileDisplay from './profile.js'
 const {
-    createProfilePage,
+    loadProfilePage,
 } = userProfileDisplay;
 
 document.addEventListener('DOMContentLoaded', function() {

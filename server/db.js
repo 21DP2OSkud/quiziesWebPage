@@ -83,6 +83,26 @@ const quizImgStorage = multer.diskStorage({
         cb(null, newFilename); // Callback with the new filename
     }
 });
+const uploadedImgPath = multer({ storage: quizImgStorage }); // Pasaku, kur ir jātiek saglabātām bildēm
+
+
+// Set up multer storage for user profile images
+const userProfileImageStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'server/users_profile_pictures/'); // Destination directory for user profile pictures
+    },
+    filename: function (req, file, cb) {
+        const originalName = file.originalname.split('.')[0]; // Extracting original filename without extension png/jpg/jpeg
+        const timestamp = req.body.timestamp; // Use timestamp provided by the client
+        const extension = path.extname(file.originalname); // stores File extension png/jpg/jpeg
+        const newFilename = `${req.body.username}-${originalName}-${timestamp}${extension}`; // Constructing new filename
+        req.newFilename = newFilename; // Save new filename to req object for later use
+        cb(null, newFilename); // Callback with the new filename
+    }
+});
+
+const uploadUserProfileImg = multer({ storage: userProfileImageStorage }).single('profile_image');
+
 
 
 //
@@ -201,10 +221,66 @@ app.post('/api/logout', (req, res) => {
 //
 
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Function to delete old profile image
+function deleteOldProfileImage(oldProfileImageUrl) {
+    if (oldProfileImageUrl) {
+        // Construct the absolute path to the old profile image
+        const oldImagePath = path.resolve(__dirname, '..', oldProfileImageUrl.replace('../', ''));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+        console.log("Checking for old image at:", oldImagePath.yellow);
+
+        if (fs.existsSync(oldImagePath)) {
+            fs.unlink(oldImagePath, (err) => {
+                if (err) {
+                    console.error('Error deleting old profile image:', err);
+                } else {
+                    console.log('Old profile image deleted successfully: ', oldProfileImageUrl.red);
+                }
+            });
+        } else {
+            console.log('Old profile image does not exist:', oldImagePath);
+        }
+    } else {
+        console.log('No old profile image URL provided.');
+    }
+}
+
+
+// API endpoint to update user profile
+app.post('/api/update-user-profile', (req, res) => {
+    uploadUserProfileImg(req, res, (err) => {
+        if (err) {
+            return res.status(500).send('Error uploading profile image');
+        }
+
+        const { user_id, username, oldProfileImageUrl } = req.body;
+        let profileImageUrl = oldProfileImageUrl; // Default to the old profile image URL
+
+        // Check if a new profile image was uploaded
+        if (req.file) {
+            profileImageUrl = `../server/users_profile_pictures/${req.newFilename}`; // Construct full path using new filename
+            // Delete the old profile image if it exists
+            deleteOldProfileImage(oldProfileImageUrl);
+        }
+
+        // Update user profile in the database
+        const updateUserProfileQuery = `
+            UPDATE users 
+            SET username = ?, profile_image_url = ? 
+            WHERE user_id = ?
+        `;
+
+        con.query(updateUserProfileQuery, [username, profileImageUrl, user_id], function(err, result) {
+            if (err) {
+                console.error('Error updating user profile:', err);
+                return res.status(500).send('Error updating user profile');
+            } else {
+                console.log('User profile updated successfully');
+                console.log(username, profileImageUrl, user_id);
+                return res.status(200).json({ message: 'User profile updated successfully', profileImageUrl });
+            }
+        });
+    });
 });
 
 
@@ -246,7 +322,8 @@ app.get('/api/protected-route', protectRoute, (req, res) => {
 //
 // Create and edit quizzes
 //
-const uploadedImgPath = multer({ storage: quizImgStorage }); // Pasaku, kur ir jātiek saglabātām bildēm
+
+
 // Define route for handling POST requests to /api/quizzes
 app.post('/api/quizzes', uploadedImgPath.single('image'), (req, res) => {
 //.single() function indicates that only one file will be uploaded. By default, Multer, the file uploading middleware for Express, expects the name attribute of the form field that contains the file to be image. So, uploadedImgPath.single() would expect a file input field with the name attribute set to image. If you have a different name for your file input field, you should pass that name as an argument to the single() function. For example, if your file input field has the name myImage, you would use uploadedImgPath.single('myImage').
