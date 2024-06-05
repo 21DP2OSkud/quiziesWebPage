@@ -786,6 +786,11 @@ video {
   height: 80%;
 }
 
+.h-\[fit-content\] {
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
 .h-auto {
   height: auto;
 }
@@ -834,6 +839,10 @@ video {
   width: 30%;
 }
 
+.w-\[70\%\] {
+  width: 70%;
+}
+
 .w-full {
   width: 100%;
 }
@@ -867,6 +876,10 @@ video {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.resize {
+  resize: both;
 }
 
 .list-none {
@@ -905,6 +918,10 @@ video {
 
 .justify-evenly {
   justify-content: space-evenly;
+}
+
+.gap-4 {
+  gap: 1rem;
 }
 
 .space-x-3 > :not([hidden]) ~ :not([hidden]) {
@@ -1900,6 +1917,122 @@ video {
 
 #profile-container .edit-username-icon {
   transform: translateY(25%);
+}
+
+/*
+// my-quizzes-template.html
+*/
+
+.my-quizzes-content-box {
+  background-color: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
+  margin-top: 2.5%;
+  margin-right: 2.5%;
+  margin-left: 2.5%;
+}
+
+#my-quizzes-parent-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+#my-quizzes-parent-div #quiz-div {
+  background-color: rgb(225, 219, 219);
+  display: flex;
+  flex-direction: row;
+  /* Set row direction to place items side by side */
+  align-items: flex-start;
+  /* Align items to the top */
+  width: 100%;
+  max-width: 1020px;
+  /* Adjust as needed */
+  gap: 0px;
+  /* Add gap between quiz and stats */
+  padding: 8px;
+  margin-top: 16px;
+}
+
+#my-quizzes-parent-div .quiz-box {
+  width: 70%;
+  /* Adjust width as needed to fit beside the stats */
+  min-width: 500px;
+  /* Adjust as needed */
+  background-color: #f3f3f3;
+  /* Example background color */
+}
+
+#my-quizzes-parent-div .stats-div {
+  background-color: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  width: 50%;
+  text-align: center;
+  /*border: 2px solid rgb(61, 61, 61); */
+}
+
+#my-quizzes-parent-div .stats-div hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(to right, #FFC371, #FF5F6D, #FFC371);
+  margin: 10px 0;
+  /* Adjust margin as needed */
+}
+
+/*
+// index.html | index_sliding_panel.js
+*/
+
+.sliding-panel-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  /* Adjust height as needed */
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.5);
+  /* Slight background color for better visibility */
+}
+
+.sliding-element {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slideLeft 10s linear infinite;
+}
+
+@keyframes slideLeft {
+  0% {
+    left: 100%;
+  }
+
+  100% {
+    left: -100%;
+  }
+}
+
+.sliding-element .quiz-box {
+  aspect-ratio: 16 / 9;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sliding-element .quiz-image {
+  width: 100%;
+  height: 100%;
 }
 
 .hover\:scale-105:hover {

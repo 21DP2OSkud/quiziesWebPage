@@ -284,6 +284,27 @@ app.post('/api/update-user-profile', (req, res) => {
 });
 
 
+// Load quizzes created by a specific user
+app.get('/api/user-quizzes', (req, res) => {
+    const userId = req.query.user_id;
+    
+    if (!userId) {
+        return res.status(400).send('User ID is required');
+    }
+
+    const query = "SELECT quiz_id, imgUrl, title, description, created_at FROM quizzes WHERE creator_id = ?";
+    
+    con.query(query, [userId], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error fetching user quizzes');
+        } else {
+            res.json(result);
+        }
+    });
+});
+
+
 //
 // Session protect routes
 //
@@ -388,14 +409,20 @@ app.post('/api/quizzes', uploadedImgPath.single('image'), (req, res) => {
 
 // Load quizzes data from DB
 app.get('/api/quizzes', (req, res) => {
-    const query = "SELECT quiz_id, imgUrl, title, description, created_at FROM quizzes";
-    con.query(query, (err, result) => {
+    const userId = req.query.user_id;
+    let query = "SELECT quiz_id, imgUrl, title, description, created_at, creator_id FROM quizzes";
+    
+    // If user_id is provided, add a WHERE clause to filter quizzes by creator_id
+    if (userId) {
+        query += " WHERE creator_id = ?";
+    }
+
+    con.query(query, [userId], (err, result) => {
         if (err) {
             console.error(err);
             res.status(500).send('Error fetching data from quizzes');
-        }
-        else {
-            res.json(result)
+        } else {
+            res.json(result);
         }
     });
 });
@@ -434,6 +461,21 @@ function deleteImage(imagePath, res) {
         }
     });
 }
+
+
+// Load the 10 newest quizzes
+app.get('/api/newest-quizzes', (req, res) => {
+    const query = "SELECT quiz_id, imgUrl, title, description, created_at FROM quizzes ORDER BY created_at DESC LIMIT 10";
+    
+    con.query(query, (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error fetching newest quizzes');
+        } else {
+            res.json(result);
+        }
+    });
+});
 
 
 // Start the server

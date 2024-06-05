@@ -2,7 +2,8 @@
 let quizzesData = null;
 let quizzesPromise = null;
 
-function loadQuizzesFromDB() {
+
+function loadAllQuizzesFromDB() {
     if (quizzesData) {
         return Promise.resolve(quizzesData);
     }
@@ -30,6 +31,52 @@ function loadQuizzesFromDB() {
     return quizzesPromise;
 }
 
+
+function loadUserQuizzesFromDB(userId) {
+    return fetch(`http://localhost:3000/api/user-quizzes?user_id=${userId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load user quizzes');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return {
+                data: data,
+                ids: data.map(item => item.quiz_id)
+            };
+        })
+        .catch(error => {
+            console.error(error);
+            throw error;
+        });
+}
+
+
+// Function to load 10 newest quizzes from DB
+function loadNewestQuizzesFromDB() {
+    return fetch('http://localhost:3000/api/newest-quizzes')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load newest quizzes');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return {
+                data: data,
+                ids: data.map(item => item.quiz_id)
+            };
+        })
+        .catch(error => {
+            console.error(error);
+            throw error;
+        });
+}
+
+
 export {
-    loadQuizzesFromDB,
+    loadAllQuizzesFromDB,
+    loadUserQuizzesFromDB,
+    loadNewestQuizzesFromDB,
 }

@@ -8,6 +8,7 @@ const {
 let isHovered = false;
 let labelHovered = false;
 let collapseTimeout;
+const sessionData = checkSession(); // session data
 
 function addLeftBarIcon() {
     // Const variable declarations
@@ -23,14 +24,25 @@ function addLeftBarIcon() {
     const labelsDiv = document.createElement('div');
 
     const myQuizzesLabel = createLeftBarLabel(1, 'My quizzes');
+    myQuizzesLabel.addEventListener('click', function () {
+
+        if (sessionData.session) {
+            window.location.href = 'http://127.0.0.1:5500/src/my-quizzes-template.html';
+        } else {
+            alert('Login to access my quizzes');
+        }
+
+    }); 
+
     const dashboardLabel = createLeftBarLabel(2, 'Dashboard');
     dashboardLabel.addEventListener('click', function () {
-        if (checkSession()) {
+
+        if (sessionData.session) {
             window.location.href = 'http://127.0.0.1:5500/src/dashboard-template.html';
-        }
-        else {
+        } else {
             alert('Login to see the dashboard');
         }
+
     });
     const settingLabel = createLeftBarLabel(3, 'Settings');
 

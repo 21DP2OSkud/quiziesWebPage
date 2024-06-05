@@ -1,14 +1,17 @@
 // quizzes_search.js
-import { loadQuizzesFromDB } from './quizzes_loader.js';
+import * as quizzesLoader from './quizzes_loader.js';
+const {
+    loadAllQuizzesFromDB,
+} = quizzesLoader;
 
 import * as create_quiz from './quizzes_create_quiz.js';
-
 const {
     createLoadedQuizzes,
 } = create_quiz;
 
+
 document.addEventListener('DOMContentLoaded', function() {
-    loadQuizzesFromDB().then(({ data, ids }) => {
+    loadAllQuizzesFromDB().then(({ data, ids }) => {
         data.forEach(item => {
             const quiz = {
                 id: item.quiz_id,

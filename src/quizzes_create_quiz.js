@@ -58,7 +58,10 @@ function createLoadedQuizzes(id, imgPath, title, description) {
     newQuizDescription.appendChild(newQuizTitle);
     newQuiz.appendChild(newQuizImg);
     newQuiz.appendChild(newQuizDescription);
-    if (checkSession()) {
+
+
+    const sessionData = checkSession();
+    if (sessionData.session) {
         btn_editQuiz.appendChild(btn_editQuizIcon);
         newQuiz.appendChild(btn_editQuiz);
     }
@@ -197,12 +200,16 @@ function createQuizUI(){
 
 
 document.getElementById("btn-create-quiz").addEventListener("click", function() {
-    if (checkSession()) {
+
+    // Call checkSession on page load
+    const sessionData = checkSession();
+
+    if (sessionData.session) {
         createQuizUI();
-    }
-    else {
+    } else {
         alert("Login to create quizzes");
     }
+
 });
 
 

@@ -11,15 +11,25 @@ const {
     addNewQuizDB,
     updateQuizRecordDataDB,
     updateQuizRecordDB,
-} = clientSide;
+} = clientSide; 
 
 import * as ui from './gbl_create_ui.js';
 const {
     createOverlay,
 } = ui;
 
+import * as quizzesLoader from './quizzes_loader.js';
+const {
+    loadAllQuizzesFromDB,
+    loadUserQuizzesFromDB,
+} = quizzesLoader;
+
 
 //
+//
+//
+
+
 function createEditQuizUI(record) {
 
     // Function to toggle visibility
@@ -295,37 +305,56 @@ function closeEditQuizUI() {
 }
 
 
-// quizzes_edit_quiz.js
-import { loadQuizzesFromDB } from './quizzes_loader.js';
-
 document.addEventListener('DOMContentLoaded', function() {
-    loadQuizzesFromDB()
-        .then(({ data, ids }) => {
-            addEditButtonEventListeners(data, ids);
-            console.log('Quiz IDs:', ids);
-        })
-        .catch(error => {
-            console.error('Error loading quizzes:', error);
-        });
+    const currentPage = window.location.pathname;
+    const sessionData = checkSession();
 
+    if (sessionData && sessionData.session && currentPage.includes('my-quizzes-template.html')) {
+        const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+        if (userProfile) {
+            const userId = userProfile.user_id;
+            loadUserQuizzesFromDB(userId)
+                .then(({ data, ids }) => {
+                    addEditButtonEventListeners(data, ids);
+                    console.log('User Quiz IDs:', ids);
+                })
+                .catch(error => {
+                    console.error('Error loading user quizzes:', error);
+                });
+        } else {
+            console.log('No user profile found in local storage.');
+        }
+    } else {
+        loadAllQuizzesFromDB()
+            .then(({ data, ids }) => {
+                addEditButtonEventListeners(data, ids);
+                console.log('All Quiz IDs:', ids);
+            })
+            .catch(error => {
+                console.error('Error loading all quizzes:', error);
+            });
+    }
 
     function addEditButtonEventListeners(data_local, idsArray) {
         let ids = idsArray || [];
 
         ids.forEach(quizID => {
-            if (checkSession()) {
-                document.getElementById("edit-quiz-" + quizID).addEventListener("click", function() {
-                    console.log(data_local);
-    
-                    const record = data_local.find(item => item.quiz_id === quizID);
-                    if (record) {
-                        createEditQuizUI(record);
-                        console.log("Quiz edit button with id: " + quizID + " was pressed!");
-                        console.log(record);
-                    } else {
-                        console.log("Quiz with id " + quizID + " not found.");
-                    }
-                });
+            if (sessionData && sessionData.session) {
+                const editButton = document.getElementById("edit-quiz-" + quizID);
+                if (editButton) {
+                    editButton.addEventListener("click", function() {
+                        const record = data_local.find(item => item.quiz_id === quizID);
+                        if (record) {
+                            createEditQuizUI(record);
+                            console.log("Quiz edit button with id: " + quizID + " was pressed!");
+                            console.log(record);
+                        } else {
+                            console.log("Quiz with id " + quizID + " not found.");
+                        }
+                    });
+                } else {
+                    console.log("Edit button with id edit-quiz-" + quizID + " not found.");
+                }
             }
         });
     }
