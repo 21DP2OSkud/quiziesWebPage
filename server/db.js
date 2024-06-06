@@ -347,63 +347,55 @@ app.get('/api/protected-route', protectRoute, (req, res) => {
 
 // Define route for handling POST requests to /api/quizzes
 app.post('/api/quizzes', uploadedImgPath.single('image'), (req, res) => {
-//.single() function indicates that only one file will be uploaded. By default, Multer, the file uploading middleware for Express, expects the name attribute of the form field that contains the file to be image. So, uploadedImgPath.single() would expect a file input field with the name attribute set to image. If you have a different name for your file input field, you should pass that name as an argument to the single() function. For example, if your file input field has the name myImage, you would use uploadedImgPath.single('myImage').
     let { quiz_id, imgUrl, title, description, user_id } = req.body;
-    console.log(req.body);
+    console.log(req.body); // Ensure quiz_id is present in the body
 
-    // Check if a file is uploaded in the request, if so, update imgUrl
     if (req.file) {
         imgUrl = req.file.path;
     }
     console.log("imgUrl: " + imgUrl);
     console.log("quiz_id: " + quiz_id);
-    console.log("");
-    //const createdAt = new Date(); // Built in js function date()
-    const createdAt = moment().format('YYYY-MM-DD HH:mm:ss'); // date from moment library
+    
+    const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
 
-
-    if (quiz_id !== undefined  & imgUrl !== undefined) { // if post request came with quiz_id and with image change ----> UPDATE
+    if (quiz_id !== undefined && imgUrl !== undefined) {
         const lastUpdate_at = moment().format('YYYY-MM-DD HH:mm:ss');
         const updateQuizQuery = "UPDATE quizzes SET imgUrl = ?, title = ?, description = ?, lastUpdate_at = ? WHERE quiz_id = ?";
         con.query(updateQuizQuery, [imgUrl, title, description, lastUpdate_at, quiz_id], function(err, result) {
             if (err) {
                 console.error(err);
                 res.status(500).send('Error updating quiz');
-            }
-            else {
+            } else {
                 console.log("Quiz updated successfully with image change");
-                res.status(200).send('Quiz updated successfully with image change');
+                res.status(200).send('Quiz updated successfully with image change'.bgYellow);
             }
         });
-    }
-    else if (quiz_id !== undefined & imgUrl === undefined) { // if post request came with quiz_id and without image change ----> UPDATE
+    } else if (quiz_id !== undefined && imgUrl === undefined) {
         const lastUpdate_at = moment().format('YYYY-MM-DD HH:mm:ss');
         const updateQuizQuery = "UPDATE quizzes SET title = ?, description = ?, lastUpdate_at = ? WHERE quiz_id = ?";
         con.query(updateQuizQuery, [title, description, lastUpdate_at, quiz_id], function(err, result) {
             if (err) {
                 console.error(err);
                 res.status(500).send('Error updating quiz');
-            }
-            else {
+            } else {
                 console.log("Quiz updated successfully without image change");
-                res.status(200).send('Quiz updated successfully without image change');
+                res.status(200).send('Quiz updated successfully without image change'.bgYellow);
             }
         });
-    }
-    else if (quiz_id === undefined) { // if post request came without quiz_id ----> INSERT
+    } else {
         const addNewQuizQuery = "INSERT INTO quizzes (imgUrl, title, description, creator_id, created_at) VALUES (?, ?, ?, ?, ?)";
         con.query(addNewQuizQuery, [imgUrl, title, description, user_id, createdAt], function(err, result) {
             if (err) {
                 console.error(err);
                 res.status(500).send('Error adding quiz');
-            }
-            else {
-                console.log("New quiz added to the database");
+            } else {
+                console.log("New quiz added to the database".bgYellow);
                 res.status(200).send('Quiz added successfully');
             }
         });
     }
 });
+
 
 
 

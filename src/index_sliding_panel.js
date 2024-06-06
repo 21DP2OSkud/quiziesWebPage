@@ -1,9 +1,14 @@
-// Import the function from quizzes_loader.js
 import { loadNewestQuizzesFromDB } from './quizzes_loader.js';
 
 // Function to create the sliding quizzes
 function createNewestLoadedQuizzes(title, description, image) {
-    const slidingPanelContainer = document.querySelector('.sliding-panel-container');
+    const slidingPanelContainers = document.getElementsByClassName("sliding-panel-container");
+    if (slidingPanelContainers.length === 0) {
+        console.error('No sliding panel container found');
+        return;
+    }
+
+    const slidingPanelContainer = slidingPanelContainers[0];
     let imageSrc = "../" + image;
 
     const slidingElement = document.createElement('div');
@@ -23,10 +28,20 @@ function createNewestLoadedQuizzes(title, description, image) {
     slidingElement.appendChild(newQuiz);
     slidingPanelContainer.appendChild(slidingElement);
 
-    // Remove the sliding element after it has completed its animation
-    slidingElement.addEventListener('animationend', () => {
+    // Calculate the animation duration based on the width of the container and the speed you want the elements to slide
+    const containerWidth = slidingPanelContainer.offsetWidth;
+    const animationDuration = containerWidth / 50; // Adjust the divisor to control the speed of sliding
+
+    // Set animation duration dynamically
+    slidingElement.style.animationDuration = animationDuration + 's';
+
+    // Remove the sliding element after it has fully passed through the container
+    const removeElement = () => {
+        slidingElement.removeEventListener('animationend', removeElement);
         slidingPanelContainer.removeChild(slidingElement);
-    });
+    };
+
+    slidingElement.addEventListener('animationend', removeElement);
 }
 
 // Load the newest quizzes immediately on page load
@@ -64,9 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial fetch and display
     fetchAndDisplayQuizzes();
 
-    // Set interval to fetch new quizzes periodically
-    setInterval(fetchAndDisplayQuizzes, 600000); // Adjust the interval as needed
+    setInterval(fetchAndDisplayQuizzes, 600000); // Refresh quizzes every 10 minutes
 
     // Set interval to display the next quiz
-    setInterval(displayNextQuiz, 12000); // Adjust the interval as needed
+    setInterval(displayNextQuiz, 4000); // Show next quiz every 12 seconds
 });

@@ -17,7 +17,7 @@ function registerUser(formData) {
         console.log(`${key}: ${value}`);
     }
 
-    fetch('http://localhost:3000/api/register', {
+    fetch('http://87.110.86.104:3000/api/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ function registerUser(formData) {
 
 // Login user
 function loginUser(formData) {
-    return fetch('http://localhost:3000/api/login', {
+    return fetch('http://87.110.86.104:3000/api/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -73,7 +73,7 @@ function loginUser(formData) {
 
 
 function updateUserProfileDB(formData) {
-    return fetch('http://localhost:3000/api/update-user-profile', {
+    return fetch('http://87.110.86.104:3000/api/update-user-profile', {
         method: 'POST',
         body: formData, // Send the FormData containing the updated user profile data
     })
@@ -98,7 +98,7 @@ function updateUserProfileDB(formData) {
 
 // Delete image from server
 function deleteImgUrlFromServer(imgUrl) { // Deletes image from server
-    const url = new URL('http://localhost:3000/api/quizzes_delete');
+    const url = new URL('http://87.110.86.104:3000/api/quizzes_delete');
     url.searchParams.append('imagePath', imgUrl); // http://localhost:3000/api/quizzes_images?imagePath=server%2Fquizzes_uploaded_images%2Fimage-1713946925650.jpg
 
     return fetch(url.toString(), {
@@ -123,7 +123,7 @@ function deleteQuizFromDB(formData) {
     const imagePath = formData.get('imagePath');
     const quiz_id = formData.get('quiz_id');
 
-    return fetch(`http://localhost:3000/api/quizzes_delete?quiz_id=${quiz_id}&imagePath=${imagePath}`, {
+    return fetch(`http://87.110.86.104:3000/api/quizzes_delete?quiz_id=${quiz_id}&imagePath=${imagePath}`, {
         method: 'DELETE'
     })
     .then(response => {
@@ -146,7 +146,7 @@ function addNewQuizDB(formData) {
     if (sessionData.session) {
         const user_id = sessionData.userProfile.user_id; // gets user_id from session data
         formData.append('user_id', user_id); // append user_id to formData
-        fetch('http://localhost:3000/api/quizzes', {
+        fetch('http://87.110.86.104:3000/api/quizzes', {
             method: 'POST',
             body: formData
         })
@@ -167,26 +167,14 @@ function addNewQuizDB(formData) {
 
 
 
-// Add image to server
-function updateQuizRecordDataDB(formData) {
-
-    return fetch('http://localhost:3000/api/quizzes', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to add image to server');
-        }
-        // ELSE
-        console.log('DB data seccessfully added to the server!');
-    })
-}
-
-
-
-// REcreate
+// Update record in the database, with or without an image change
 function updateQuizRecordDB(formData, old_imgUrl, new_imgUrl) {
+    // Ensure quiz_id is appended to formData
+    if (!formData.has('quiz_id')) {
+        console.error('quiz_id is missing from formData');
+        return;
+    }
+
     if (old_imgUrl !== new_imgUrl) {
         // Delete old image from server
         deleteImgUrlFromServer(old_imgUrl)
@@ -195,7 +183,7 @@ function updateQuizRecordDB(formData, old_imgUrl, new_imgUrl) {
                 formData.append('image', new_imgUrl);
                 updateQuizRecordDataDB(formData)
                     .then(() => {
-                        console.log('Quiz updated (with image change)!')
+                        console.log('Quiz updated (with image change)!');
                     })
                     .catch(error => {
                         console.error('Failed to update (with image change):', error);
@@ -204,18 +192,30 @@ function updateQuizRecordDB(formData, old_imgUrl, new_imgUrl) {
             .catch(error => {
                 console.error('Failed to delete old image URL:', error);
             });
-    }
-    else if (old_imgUrl === new_imgUrl) {
+    } else {
         // Record changes without image change
         updateQuizRecordDataDB(formData)
             .then(() => {
-                console.log('Quiz updated (without image change)!')
+                console.log('Quiz updated (without image change)!');
             })
             .catch(error => {
                 console.error('Failed to update (without image change):', error);
             });
     }
+}
 
+// Function to handle updating quiz data in the database
+function updateQuizRecordDataDB(formData) {
+    return fetch('http://87.110.86.104:3000/api/quizzes', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to add image to server');
+        }
+        console.log('DB data successfully added to the server!');
+    });
 }
 
 

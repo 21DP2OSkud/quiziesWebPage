@@ -673,6 +673,11 @@ video {
   margin-right: 1rem;
 }
 
+.mx-\[12\.5\%\] {
+  margin-left: 12.5%;
+  margin-right: 12.5%;
+}
+
 .mx-\[25\%\] {
   margin-left: 25%;
   margin-right: 25%;
@@ -736,6 +741,10 @@ video {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
 }
 
 .mt-\[10\%\] {
@@ -1309,6 +1318,13 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .active {
   color: blue !important;
 }
@@ -1451,6 +1467,7 @@ video {
   background-color: rgba(255, 255, 255, 0.5);
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
+  margin-bottom: 16px;
 }
 
 .quiz-box {
@@ -1987,28 +2004,37 @@ video {
 // index.html | index_sliding_panel.js
 */
 
+/* Add your custom CSS styles here */
+
 .sliding-panel-container {
   position: relative;
-  width: 100%;
-  height: 300px;
-  /* Adjust height as needed */
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.5);
-  /* Slight background color for better visibility */
+  width: 80%;
+  /* Adjust width as needed */
+  height: 200px;
+  /* Set a fixed height for the sliding panel */
+  max-height: 200px;
+  /* Ensure max-height is consistent */
+  margin: auto;
+  /* Center the panel */
+  background-color: #f3f4f6;
+  /* Background color for visibility */
+  border: 1px solid #ccc;
+  /* Optional border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Optional shadow */
 }
 
 .sliding-element {
   position: absolute;
   top: 0;
+  left: 100%;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: slideLeft 10s linear infinite;
+  animation: slideQuiz 12s linear forwards;
 }
 
-@keyframes slideLeft {
+@keyframes slideQuiz {
   0% {
     left: 100%;
   }
@@ -2019,20 +2045,36 @@ video {
 }
 
 .sliding-element .quiz-box {
-  aspect-ratio: 16 / 9;
-  height: 100%;
+  aspect-ratio: 16/9;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  height: 100%;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.sliding-element .quiz-title {
+  font-weight: bold;
+  font-style: italic;
+  margin-bottom: 10px;
 }
 
 .sliding-element .quiz-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.sliding-element .quiz-description {
+  font-size: 14px;
 }
 
 .hover\:scale-105:hover {
@@ -2292,3 +2334,4 @@ video {
     }
   }
 }
+

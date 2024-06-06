@@ -8,7 +8,7 @@ function loadAllQuizzesFromDB() {
         return Promise.resolve(quizzesData);
     }
     if (!quizzesPromise) {
-        quizzesPromise = fetch('http://localhost:3000/api/quizzes')
+        quizzesPromise = fetch('http://87.110.86.104:3000/api/quizzes')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to load quizzes');
@@ -33,7 +33,7 @@ function loadAllQuizzesFromDB() {
 
 
 function loadUserQuizzesFromDB(userId) {
-    return fetch(`http://localhost:3000/api/user-quizzes?user_id=${userId}`)
+    return fetch(`http://87.110.86.104:3000/api/user-quizzes?user_id=${userId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to load user quizzes');
@@ -55,7 +55,7 @@ function loadUserQuizzesFromDB(userId) {
 
 // Function to load 10 newest quizzes from DB
 function loadNewestQuizzesFromDB() {
-    return fetch('http://localhost:3000/api/newest-quizzes')
+    return fetch('http://87.110.86.104:3000/api/newest-quizzes')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to load newest quizzes');

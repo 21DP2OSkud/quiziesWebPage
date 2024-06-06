@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    margin: 0;
+    min-height: 100vh; 
+    background-repeat: no-repeat; 
+    background-size: cover;
+}
+
 
 .active {
     color: blue !important;
@@ -136,6 +143,7 @@
 .box {
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(5px);
+    margin-bottom: 16px;
 }
 
 .quiz-box {
@@ -619,34 +627,41 @@
 
 
 /* Add your custom CSS styles here */
-.slide-quiz-container {
+.sliding-panel-container {
     position: relative;
     overflow: hidden;
-    height: calc(9/16 * 100vw);
-    max-height: calc(9/16 * 100vw);
+    width: 80%; /* Adjust width as needed */
+    height: 200px; /* Set a fixed height for the sliding panel */
+    max-height: 200px; /* Ensure max-height is consistent */
+    margin: auto; /* Center the panel */
+    background-color: #f3f4f6; /* Background color for visibility */
+    border: 1px solid #ccc; /* Optional border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow */
 }
 
 .sliding-element {
     position: absolute;
     top: 0;
-    right: 100%;
+    left: 100%;
     width: 100%;
     height: 100%;
-    animation: slideQuiz 5s linear forwards;
+    animation: slideQuiz 12s linear forwards;
 }
 
 @keyframes slideQuiz {
+    0% {
+        left: 100%;
+    }
     100% {
-        transform: translateX(-100%);
+        left: -100%;
     }
 }
 
 .sliding-element .quiz-box {
+    aspect-ratio: 16/9;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
     height: 100%;
     background-color: #fff;
     border: 1px solid #ccc;
@@ -662,13 +677,15 @@
 }
 
 .sliding-element .quiz-image {
-    max-width: 80%;
-    height: auto;
-    margin-bottom: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.sliding-element.quiz-description {
+.sliding-element .quiz-description {
     font-size: 14px;
 }
-
 
