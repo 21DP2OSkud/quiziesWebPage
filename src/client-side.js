@@ -3,7 +3,7 @@ const {
     checkSession,
 } = session;
 
-
+let IP = "81.198.7.240";
 
 //
 // Authentication methods
@@ -17,7 +17,7 @@ function registerUser(formData) {
         console.log(`${key}: ${value}`);
     }
 
-    fetch('http://87.110.86.104:3000/api/register', {
+    fetch(`http://${IP}:3000/api/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ function registerUser(formData) {
 
 // Login user
 function loginUser(formData) {
-    return fetch('http://87.110.86.104:3000/api/login', {
+    return fetch(`http://${IP}:3000/api/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -73,7 +73,7 @@ function loginUser(formData) {
 
 
 function updateUserProfileDB(formData) {
-    return fetch('http://87.110.86.104:3000/api/update-user-profile', {
+    return fetch(`http://${IP}:3000/api/update-user-profile`, {
         method: 'POST',
         body: formData, // Send the FormData containing the updated user profile data
     })
@@ -98,7 +98,7 @@ function updateUserProfileDB(formData) {
 
 // Delete image from server
 function deleteImgUrlFromServer(imgUrl) { // Deletes image from server
-    const url = new URL('http://87.110.86.104:3000/api/quizzes_delete');
+    const url = new URL(`http://${IP}:3000/api/quizzes_delete`);
     url.searchParams.append('imagePath', imgUrl); // http://localhost:3000/api/quizzes_images?imagePath=server%2Fquizzes_uploaded_images%2Fimage-1713946925650.jpg
 
     return fetch(url.toString(), {
@@ -123,7 +123,7 @@ function deleteQuizFromDB(formData) {
     const imagePath = formData.get('imagePath');
     const quiz_id = formData.get('quiz_id');
 
-    return fetch(`http://87.110.86.104:3000/api/quizzes_delete?quiz_id=${quiz_id}&imagePath=${imagePath}`, {
+    return fetch(`http://${IP}:3000/api/quizzes_delete?quiz_id=${quiz_id}&imagePath=${imagePath}`, {
         method: 'DELETE'
     })
     .then(response => {
@@ -146,7 +146,7 @@ function addNewQuizDB(formData) {
     if (sessionData.session) {
         const user_id = sessionData.userProfile.user_id; // gets user_id from session data
         formData.append('user_id', user_id); // append user_id to formData
-        fetch('http://87.110.86.104:3000/api/quizzes', {
+        fetch(`http://${IP}:3000/api/quizzes`, {
             method: 'POST',
             body: formData
         })
@@ -206,7 +206,7 @@ function updateQuizRecordDB(formData, old_imgUrl, new_imgUrl) {
 
 // Function to handle updating quiz data in the database
 function updateQuizRecordDataDB(formData) {
-    return fetch('http://87.110.86.104:3000/api/quizzes', {
+    return fetch(`http://${IP}:3000/api/quizzes`, {
         method: 'POST',
         body: formData
     })

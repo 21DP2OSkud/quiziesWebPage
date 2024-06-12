@@ -1,6 +1,9 @@
 // Import the functions to be used in other files if needed
 import * as session from './gbl_check_session.js';
-const { checkSession } = session;
+const { 
+    checkSession 
+} = session;
+const sessionData = checkSession();
 
 import * as clientSide from './client-side.js';
 const {
@@ -265,9 +268,8 @@ function closeEditQuizUI() {
 
 document.addEventListener('DOMContentLoaded', function() {
     const currentPage = window.location.pathname;
-    const sessionData = checkSession();
 
-    if (sessionData && sessionData.session && currentPage.includes('my-quizzes-template.html')) {
+    if (sessionData.session && currentPage.includes('my-quizzes-template.html')) {
         const userProfile = JSON.parse(localStorage.getItem('userProfile'));
         if (userProfile) {
             const userId = userProfile.user_id;
@@ -292,28 +294,57 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error loading all quizzes:', error);
             });
     }
+});
 
-    function addEditButtonEventListeners(data_local, idsArray) {
-        let ids = idsArray || [];
 
-        ids.forEach(quizID => {
-            if (sessionData && sessionData.session) {
-                const editButton = document.getElementById("edit-quiz-" + quizID);
-                if (editButton) {
-                    editButton.addEventListener("click", function() {
+function addEditButtonEventListeners(data_local, idsArray) {
+    const isAdmin = sessionData.admin;
+    const userProfile = sessionData.userProfile;
+    const userId = userProfile ? userProfile.user_id : null;
+
+    let ids = idsArray || [];
+
+    ids.forEach(quizID => {
+        const editButton = document.getElementById("edit-quiz-" + quizID);
+        if (editButton) {
+            if (isAdmin) {
+                // Display edit button for admin
+                editButton.addEventListener("click", function(event) {
+                    event.stopPropagation(); // Prevents the click event from propagating to the parent elements
+                    const record = data_local.find(item => item.quiz_id === quizID);
+                    if (record) {
+                        createEditQuizUI(record);
+                        console.log("Admin edit button for quiz with id: " + quizID + " was pressed!");
+                        console.log(record);
+                    } else {
+                        console.log("Quiz with id " + quizID + " not found.");
+                    }
+                });
+            } else if (userId) {
+                // Display edit button for user if the quiz belongs to the user
+                const quizBelongsToUser = data_local.some(item => item.quiz_id === quizID && item.creator_id === userId);
+                if (quizBelongsToUser) {
+                    editButton.addEventListener("click", function(event) {
+                        event.stopPropagation(); // Prevents the click event from propagating to the parent elements
                         const record = data_local.find(item => item.quiz_id === quizID);
                         if (record) {
                             createEditQuizUI(record);
-                            console.log("Quiz edit button with id: " + quizID + " was pressed!");
+                            console.log("User edit button for quiz with id: " + quizID + " was pressed!");
                             console.log(record);
                         } else {
                             console.log("Quiz with id " + quizID + " not found.");
                         }
                     });
                 } else {
-                    console.log("Edit button with id edit-quiz-" + quizID + " not found.");
+                    // Hide edit button if the quiz doesn't belong to the user
+                    editButton.style.display = 'none';
                 }
+            } else {
+                // Hide edit button for guests
+                editButton.style.display = 'none';
             }
-        });
-    }
-});
+        } else {
+            console.log("Edit button with id edit-quiz-" + quizID + " not found.");
+        }
+    });
+}

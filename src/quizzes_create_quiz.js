@@ -1,8 +1,9 @@
-// Import the functions to be used in other files if needed
+// Import
 import * as session from './gbl_check_session.js';
 const {
     checkSession,
 } = session;
+const sessionData = checkSession();
 
 import * as clientSide from './client-side.js';
 const {
@@ -18,59 +19,6 @@ const {
     createOverlay,
     closeUI
 } = ui;
-
-
-
-// Lai varētu loadot
-function createLoadedQuizzes(id, imgPath, title, description) {
-    const quizParentDiv = document.getElementById("quizzes-parent-div");
-
-    const newQuiz = document.createElement("div");
-    newQuiz.setAttribute("class", "w-[30%] bg-gray-200 rounded-xl my-[1%] quiz-box");
-    newQuiz.setAttribute("id", "quiz-" + id);
-
-    const newQuizImg = document.createElement("img");
-    newQuizImg.src = "../" + imgPath;
-
-    const newQuizDescription = document.createElement("div");
-    newQuizDescription.setAttribute("class", "description");
-
-    const newQuizTitle = document.createElement("span");
-    newQuizTitle.setAttribute("class", "quiz-title font-bold italic");
-    newQuizTitle.textContent = title;
-
-    const newQuizHr = document.createElement("hr");
-
-    const newQuizDescriptionText = document.createElement("span");
-    newQuizDescriptionText.setAttribute("class", "quiz-description");
-    newQuizDescriptionText.textContent = description;
-
-    const btn_editQuiz = document.createElement("button");
-    btn_editQuiz.setAttribute("class", "edit-quiz-button btn-primary btn-sm");
-    btn_editQuiz.setAttribute("id", "edit-quiz-" + id);
-
-    const btn_editQuizIcon = document.createElement("i");
-    btn_editQuizIcon.setAttribute("class", "fas fa-edit");
-
-
-    newQuizDescription.appendChild(newQuizDescriptionText);
-    newQuizDescription.appendChild(newQuizHr);
-    newQuizDescription.appendChild(newQuizTitle);
-    newQuiz.appendChild(newQuizImg);
-    newQuiz.appendChild(newQuizDescription);
-
-
-    const sessionData = checkSession();
-    if (sessionData.session) {
-        btn_editQuiz.appendChild(btn_editQuizIcon);
-        newQuiz.appendChild(btn_editQuiz);
-    }
-    else {
-        console.log("Edit button not available");
-    }
-    quizParentDiv.appendChild(newQuiz);
-}
-
 
 
 // UI
@@ -201,9 +149,6 @@ function createQuizUI(){
 
 document.getElementById("btn-create-quiz").addEventListener("click", function() {
 
-    // Call checkSession on page load
-    const sessionData = checkSession();
-
     if (sessionData.session) {
         createQuizUI();
     } else {
@@ -211,9 +156,3 @@ document.getElementById("btn-create-quiz").addEventListener("click", function() 
     }
 
 });
-
-
-//
-export {
-    createLoadedQuizzes,
-};

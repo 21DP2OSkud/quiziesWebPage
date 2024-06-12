@@ -15,14 +15,12 @@
         <!-- -->
         <script src="./gbl_leftbar.js" type="module"></script>
 
-        <!--Local src-->
-        <script src="./my_quizzes_loader.js" type="module"></script>
-
-        <script src="./quizzes_edit_quiz.js" type="module"></script>
+        <!-- -->
+        <script src="./quiz-main-page-template.js" type="module"></script>
     
         <title>Tailwind CSS Test</title>
     </head>
-<body class="bg-gradient-to-b from-sky-100 to-rose-200">
+<body class="h-screen bg-gradient-to-b from-sky-100 to-rose-200">
     <nav id="nav-bar" class="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -64,10 +62,8 @@
         </div>
     </nav>
 
-    <div class="max-w-screen my-quizzes-content-box h-auto rounded-3xl" id="page-content">
-        <div id="my-quizzes-parent-div" class="flex flex-col items-center p-4"> <!-- This is the parent div where quizzes will be appended -->
-            <!-- Profile content will be loaded here -->
-        </div>
+    <div class="w-screen" id="page-content">
+        <!-- Profile content will be loaded here -->
     </div>
 </body>
 </html>

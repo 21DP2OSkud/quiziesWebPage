@@ -18,6 +18,7 @@ const {
 } = userDropDownMenu;
 
 
+let IP = "81.198.7.240";
 
 
 function createLogInUI() {
@@ -138,6 +139,7 @@ function createLogInUI() {
                 const userProfile = data.userProfile;
                 updateUserDropdown(true, userProfile);
                 closeUI(logInUI);
+                location.reload(); // page reload
                 console.log(userProfile);
                 // Optionally redirect or update UI after successful login
             })
@@ -288,7 +290,7 @@ function signOut() {
     const userProfile = JSON.parse(localStorage.getItem('userProfile'));
     const email = userProfile ? userProfile.email : ''; // Get email from local storage
 
-    fetch('http://localhost:3000/api/logout', { // Ensure the URL points to the correct server endpoint
+    fetch(`http://${IP}:3000/api/logout`, { // Ensure the URL points to the correct server endpoint
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

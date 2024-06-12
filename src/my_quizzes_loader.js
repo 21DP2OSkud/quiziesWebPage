@@ -3,7 +3,7 @@ const { checkSession } = session;
 import * as quizzesLoader from './quizzes_loader.js';
 const { loadUserQuizzesFromDB } = quizzesLoader;
 
-function createUserLoadedQuizzes(id, imgPath, title, description, likesCount, playCount, starRating) {
+function createUserLoadedQuizzes(id, imgPath, title, description, playCount, likesCount, starRating) {
     const sessionData = checkSession();
     if (sessionData.session) {
         const quizParentDiv = document.getElementById("my-quizzes-parent-div");
@@ -49,13 +49,13 @@ function createUserLoadedQuizzes(id, imgPath, title, description, likesCount, pl
         newQuiz.appendChild(btn_editQuiz);
         quizDiv.appendChild(newQuiz);
 
-        createLoadedQuizzesStatistics(newQuiz, likesCount, playCount, starRating);
+        createLoadedQuizzesStatistics(newQuiz, playCount, likesCount, starRating);
     } else {
         alert("Log in to see your quizzes");
     }
 }
 
-function createLoadedQuizzesStatistics(parentDiv, likesCount, playCount, starRating) {
+function createLoadedQuizzesStatistics(parentDiv, playCount, likesCount, starRating) {
     const statsDiv = document.createElement("div");
     const hr = document.createElement("hr");
 
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('quizzesData:', quizzesData);
 
                 quizzesData.data.forEach(quiz => {
-                    createUserLoadedQuizzes(quiz.quiz_id, quiz.imgUrl, quiz.title, quiz.description, quiz.likes, quiz.plays, quiz.rating);
+                    createUserLoadedQuizzes(quiz.quiz_id, quiz.imgUrl, quiz.title, quiz.description, quiz.play_count, quiz.likes, quiz.rating);
                 });
             })
             .catch(error => {

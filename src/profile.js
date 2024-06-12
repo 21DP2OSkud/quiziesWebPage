@@ -49,7 +49,7 @@ function loadProfilePage() {
             editButton.classList.add('absolute', 'top-0', 'right-0', 'm-2', 'bg-gray-200', 'p-2', 'rounded-full', 'hover:bg-gray-300', 'focus:outline-none');
             editButton.innerHTML = '<i class="fas fa-pencil-alt"></i>'; // Using Font Awesome for the pencil icon
             editButton.addEventListener('click', function() {
-                window.location.href = 'http://127.0.0.1:5500/src/profile-edit.html';
+                window.location.href = 'profile-edit.html';
             });
 
             // Append elements to profile container

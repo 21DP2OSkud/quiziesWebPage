@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileIcon = document.getElementById("profile-icon");
     if (userProfile) {
         profileIcon.addEventListener("click", function() {
-            window.location.href = 'http://127.0.0.1:5500/src/profile-template.html';
+            window.location.href = 'profile-template.html';
         });
     }
     else {
@@ -61,8 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check the current page and update the active state of the navigation links
     for (const [key, value] of Object.entries(routes)) {
         if (currentPage.includes(value)) {
+            const navBar = document.getElementById("nav-bar");
+            const logoSpan = document.getElementById("logo-span");
             const link = document.getElementById(`${key}-link`);
             link.classList.add('active');
+            navBar.classList.add('bg-gray-800');
+            logoSpan.classList.add('text-gray-900');
             break; // Once the active link is found, exit the loop
         }
     }

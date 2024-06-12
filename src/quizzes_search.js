@@ -4,7 +4,7 @@ const {
     loadAllQuizzesFromDB,
 } = quizzesLoader;
 
-import * as create_quiz from './quizzes_create_quiz.js';
+import * as create_quiz from './quizzes_create_loaded_quizzes.js';
 const {
     createLoadedQuizzes,
 } = create_quiz;
@@ -17,9 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 id: item.quiz_id,
                 imgPath: item.imgUrl,
                 title: item.title,
-                description: item.description
+                description: item.description,
+                creator_id: item.creator_id,
+                play_count: item.play_count,
+                likes: item.likes,
+                rating: item.rating,
             };
-            createLoadedQuizzes(quiz.id, quiz.imgPath, quiz.title, quiz.description);
+            createLoadedQuizzes(quiz.id, quiz.imgPath, quiz.title, quiz.description, quiz.creator_id, quiz.play_count, quiz.likes, quiz.rating); // Parameters
         });
         console.log('Quizzes loaded:', data);
     }).catch(error => {

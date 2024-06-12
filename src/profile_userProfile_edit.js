@@ -3,6 +3,7 @@ const {
     updateUserProfileDB,
 } = clientSide;
 
+
 document.addEventListener('DOMContentLoaded', function() {
     // Retrieve user profile data from localStorage
     const userProfile = JSON.parse(localStorage.getItem('userProfile'));
@@ -171,6 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to handle canceling changes
     function cancelChanges() {
         console.log('Profile edit cancelled');
-        window.location.href = 'http://127.0.0.1:5500/src/profile-template.html';
+        window.location.href = `profile-template.html`;
     }
 });

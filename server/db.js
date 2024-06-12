@@ -1,9 +1,9 @@
 // db.js
 const express = require('express');
 const mysql = require('mysql2');
-const session = require('express-session'); 
-const cors = require('cors'); //Priekš portiem
-const path = require('path'); //module provides utilities for working with file and directory paths.
+const session = require('express-session');
+const cors = require('cors'); // Priekš portiem
+const path = require('path'); // module provides utilities for working with file and directory paths.
 const multer = require('multer'); // For handling file uploads
 const moment = require('moment'); // For date and time
 const fs = require('fs'); // For reading and writing files
@@ -221,9 +221,11 @@ app.post('/api/logout', (req, res) => {
 //
 
 
+const DEFAULT_PROFILE_IMAGE = "../server/users_profile_pictures/default_user_img.png";
+
 // Function to delete old profile image
 function deleteOldProfileImage(oldProfileImageUrl) {
-    if (oldProfileImageUrl) {
+    if (oldProfileImageUrl && oldProfileImageUrl !== DEFAULT_PROFILE_IMAGE) {
         // Construct the absolute path to the old profile image
         const oldImagePath = path.resolve(__dirname, '..', oldProfileImageUrl.replace('../', ''));
 
@@ -241,10 +243,13 @@ function deleteOldProfileImage(oldProfileImageUrl) {
             console.log('Old profile image does not exist:', oldImagePath);
         }
     } else {
-        console.log('No old profile image URL provided.');
+        if (!oldProfileImageUrl) {
+            console.log('No old profile image URL provided.');
+        } else {
+            console.log('Old profile image is the default image, no need to delete.');
+        }
     }
 }
-
 
 // API endpoint to update user profile
 app.post('/api/update-user-profile', (req, res) => {
@@ -259,7 +264,7 @@ app.post('/api/update-user-profile', (req, res) => {
         // Check if a new profile image was uploaded
         if (req.file) {
             profileImageUrl = `../server/users_profile_pictures/${req.newFilename}`; // Construct full path using new filename
-            // Delete the old profile image if it exists
+            // Delete the old profile image if it exists and is not the default image
             deleteOldProfileImage(oldProfileImageUrl);
         }
 
@@ -284,31 +289,9 @@ app.post('/api/update-user-profile', (req, res) => {
 });
 
 
-// Load quizzes created by a specific user
-app.get('/api/user-quizzes', (req, res) => {
-    const userId = req.query.user_id;
-    
-    if (!userId) {
-        return res.status(400).send('User ID is required');
-    }
-
-    const query = "SELECT quiz_id, imgUrl, title, description, created_at FROM quizzes WHERE creator_id = ?";
-    
-    con.query(query, [userId], (err, result) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error fetching user quizzes');
-        } else {
-            res.json(result);
-        }
-    });
-});
-
-
 //
 // Session protect routes
 //
-
 
 
 app.get('/api/protected-route', (req, res) => {
@@ -351,7 +334,7 @@ app.post('/api/quizzes', uploadedImgPath.single('image'), (req, res) => {
     console.log(req.body); // Ensure quiz_id is present in the body
 
     if (req.file) {
-        imgUrl = req.file.path;
+        imgUrl = req.file.path; 
     }
     console.log("imgUrl: " + imgUrl);
     console.log("quiz_id: " + quiz_id);
@@ -402,8 +385,9 @@ app.post('/api/quizzes', uploadedImgPath.single('image'), (req, res) => {
 // Load quizzes data from DB
 app.get('/api/quizzes', (req, res) => {
     const userId = req.query.user_id;
-    let query = "SELECT quiz_id, imgUrl, title, description, created_at, creator_id FROM quizzes";
+    let query = "SELECT quiz_id, imgUrl, title, description, creator_id, created_at, lastUpdate_at, play_count, likes, rating FROM quizzes";
     
+    // Load quizzes created by a specific user
     // If user_id is provided, add a WHERE clause to filter quizzes by creator_id
     if (userId) {
         query += " WHERE creator_id = ?";
@@ -468,6 +452,25 @@ app.get('/api/newest-quizzes', (req, res) => {
         }
     });
 });
+
+//
+// Admin requests
+//
+
+// all users records
+app.get('/api/users', (req, res) => {
+    con.query('SELECT * FROM users', (error, results) => {
+        if (error) {
+            console.error('Error fetching users:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+
 
 
 // Start the server

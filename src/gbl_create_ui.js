@@ -5,10 +5,15 @@ function createOverlay() {
     document.body.appendChild(overlay);
 }
 
-function closeUI(uiDiv) {
-    document.getElementsByClassName("overlay")[0].remove();
-    uiDiv.remove();
+// Close the UI and remove the overlay
+function closeUI(uiElement) {
+    if (uiElement) {
+        uiElement.remove();
+        const overlay = document.querySelector('.overlay');
+        if (overlay) overlay.remove();
+    }
 }
+
 
 export {
     createOverlay,
