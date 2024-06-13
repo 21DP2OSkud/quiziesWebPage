@@ -604,6 +604,10 @@ video {
   visibility: visible;
 }
 
+.fixed {
+  position: fixed;
+}
+
 .absolute {
   position: absolute;
 }
@@ -1311,6 +1315,11 @@ video {
   color: rgb(17 24 39 / var(--tw-text-opacity));
 }
 
+.text-green-500 {
+  --tw-text-opacity: 1;
+  color: rgb(34 197 94 / var(--tw-text-opacity));
+}
+
 .text-slate-600 {
   --tw-text-opacity: 1;
   color: rgb(71 85 105 / var(--tw-text-opacity));
@@ -1319,6 +1328,11 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-yellow-500 {
+  --tw-text-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -1749,13 +1763,66 @@ body {
 // Admin panel UI
 */
 
+.adminControlPanelUI {
+  overflow-y: auto;
+  /* Vertical scrollbar when content overflows */
+  max-width: 100%;
+  /* Ensure the admin control panel fits within the available space */
+  position: relative;
+  /* Ensure the position context for absolute positioning */
+}
+
 .selected {
   background-color: #f0f0f0;
   /* Change background color when selected */
 }
 
+/* Delete button container */
+
+.delete-button-container {
+  position: sticky;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+  /* Prevent the container from capturing clicks */
+  margin-left: auto;
+  /* Ensures it aligns to the right */
+  z-index: 9999;
+  /* Ensure the button is above other elements */
+}
+
+/* Delete button styling */
+
+.delete-button {
+  background-color: #e53e3e;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none;
+  /* Initially hidden */
+  pointer-events: all;
+  /* Allow the button to capture clicks */
+  position: sticky;
+  right: 16px;
+  bottom: 0px;
+}
+
+/* Table styles */
+
+.admin-table-container {
+  overflow-x: auto;
+  /* Horizontal scrollbar when content overflows */
+}
+
 .admin-table {
-  width: 100%;
+  width: -moz-max-content;
+  width: max-content;
+  /* Adjust width based on content */
+  min-width: 100%;
+  /* Ensure table fills container width */
   border-collapse: collapse;
   margin-top: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -1775,15 +1842,6 @@ body {
 
 .admin-table tr:hover {
   background-color: #f5f5f5;
-}
-
-/*
-/ AUTHENTICATION UI
-*/
-
-.authentication-ui {
-  height: 720px;
-  width: 480px;
 }
 
 /*
@@ -2198,6 +2256,148 @@ body {
 
 .sliding-element .quiz-description {
   font-size: 14px;
+}
+
+/*
+// Quiz main page
+*/
+
+.quiz-card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 90vw;
+  height: 90vh;
+  max-width: 1200px;
+  max-height: 800px;
+  margin: auto;
+}
+
+.quiz-card .quiz-content {
+  display: flex;
+  width: 100%;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.quiz-card .image-container {
+  position: relative;
+  width: 50%;
+  padding-top: 25%;
+  /* Aspect ratio for image container */
+  overflow: hidden;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.quiz-card .image-div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.quiz-card .image-div img {
+  aspect-ratio: 16/9;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.quiz-card .creator-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Semi-transparent background */
+  padding: 0.5rem;
+  box-sizing: border-box;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.quiz-card .description-div {
+  padding: 1rem;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+
+.quiz-card .quiz-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #4c51bf;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.quiz-card .quiz-description {
+  font-size: 1.2rem;
+  color: #718096;
+  margin-top: 0.5rem;
+}
+
+.quiz-card .button-div {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.quiz-card .play-button {
+  width: 150px;
+  height: 50px;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.quiz-card .play-button:hover {
+  transform: scale(1.05);
+}
+
+.quiz-card .quiz-stats {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-around;
+}
+
+.quiz-card .quiz-stats div {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.quiz-card .quiz-stats i {
+  margin-right: 0.5rem;
 }
 
 .hover\:scale-105:hover {

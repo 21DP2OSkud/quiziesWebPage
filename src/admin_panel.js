@@ -55,7 +55,6 @@ function createAdminControlPanel() {
         const adminControlPanelUI = document.createElement('div');
         adminControlPanelUI.className = 'ui bg-white rounded-lg p-4 w-[1080px] h-[720px] relative overflow-auto'; // Added overflow-auto class
 
-
         // Add event listener to close the UI when Escape key is pressed
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
@@ -97,6 +96,26 @@ function createAdminControlPanel() {
         adminControlPanelUI.appendChild(tabsContainer);
         adminControlPanelUI.appendChild(usersContent);
         adminControlPanelUI.appendChild(quizzesContent);
+
+        // Create a container for the delete button (fixed position)
+        const deleteButtonContainer = document.createElement('div');
+        deleteButtonContainer.className = 'delete-button-container';
+
+        // Create the delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'delete-button';
+        deleteButton.textContent = 'Delete records';
+
+        deleteButton.addEventListener('click', function() {
+            const selectedRecords = adminControlPanelUI.querySelectorAll('tr.selected');
+            selectedRecords.forEach(record => {
+                record.remove(); // Remove selected records from DOM
+            });
+            toggleDeleteButton(); // Toggle delete button visibility
+        });
+
+        deleteButtonContainer.appendChild(deleteButton);
+        adminControlPanelUI.appendChild(deleteButtonContainer);
 
         document.body.appendChild(adminControlPanelUI);
 
@@ -220,6 +239,7 @@ function createToolbar(tabName, data, container) {
         rows.forEach(row => {
             row.classList.toggle('selected', this.checked);
         });
+        toggleDeleteButton(); // Toggle delete button visibility
     });
     toolbar.appendChild(selectAllCheckbox);
 
@@ -252,6 +272,7 @@ function createTable(data, headers) {
         const row = document.createElement('tr');
         row.addEventListener('click', function() {
             this.classList.toggle('selected');
+            toggleDeleteButton(); // Toggle delete button visibility
         });
 
         headers.forEach(header => {
@@ -264,6 +285,13 @@ function createTable(data, headers) {
     });
 
     return table;
+}
+
+// Function to toggle the visibility of the delete button
+function toggleDeleteButton() {
+    const deleteButton = document.querySelector('.delete-button');
+    const selectedRecords = document.querySelectorAll('tr.selected');
+    deleteButton.style.display = selectedRecords.length > 0 ? 'block' : 'none';
 }
 
 export { createAdminControlPanel };
