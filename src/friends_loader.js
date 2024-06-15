@@ -112,10 +112,10 @@ function sendFriendRequest(senderId, receiverId) {
     })
     .then(data => {
         console.log('Friend request sent successfully:', data);
-        // Optionally update UI or handle success message
+        // Update notification count after successful friend request
         fetchNotificationCount(sessionData.userProfile.user_id)
-            .then(data => {
-                updateNotificationCount(data);
+            .then(count => {
+                updateNotificationCount(count);
             })
             .catch(error => {
                 console.error('Error updating notification count:', error);

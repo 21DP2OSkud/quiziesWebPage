@@ -34,6 +34,22 @@ async function fetchNotifications(user_id) {
     }
 }
 
+
+async function fetchNotificationCount(user_id) {
+    try {
+        const response = await fetch(`http://${IP}:3000/api/notifications/count?user_id=${user_id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch notification count');
+        }
+        const data = await response.json();
+        return data.count;
+    } catch (error) {
+        console.error('Error fetching notification count:', error);
+        throw error;
+    }
+}
+
+
 //
 //
 //
@@ -158,7 +174,6 @@ function openNotificationsPanel() {
 function initializeNotifications() {
     const profileAndNotifications = document.getElementById('profile-and_notifications');
     const currentPage = window.location.pathname;
-    console.log(currentPage);
 
     const bellIcon = document.createElement('button');
     bellIcon.type = 'button';
@@ -181,27 +196,22 @@ function initializeNotifications() {
 
     switch (currentPage) {
         case "/src/index.html":
-            console.log("Current page is services.html");
             bellIcon.style.backgroundColor = "rgb(220,252,231)";
             addHoverEffect(bellIcon, "rgb(200, 252, 220)")
             break;
         case "/src/about.html":
-            console.log("Current page is index.html");
             bellIcon.style.backgroundColor = "rgb(254,249,195)";
             addHoverEffect(bellIcon, "rgb(255, 240, 170)")
             break;
         case "/src/services.html":
-            console.log("Current page is about.html");
             bellIcon.style.backgroundColor = "rgb(252,231,243)";
             addHoverEffect(bellIcon, "rgb(252, 217, 237)")
             break;
         case "/src/quizzes.html":
-            console.log("Current page is quizzes.html");
             bellIcon.style.backgroundColor = "rgb(219,234,254)";
             addHoverEffect(bellIcon, "rgb(207, 227, 253)")
             break;
         default:
-            console.log("Current page is not handled by this switch statement");
             bellIcon.style.backgroundColor = "rgb(31,41,55)";
             addHoverEffect(bellIcon, "#2d3748")
     }
@@ -232,4 +242,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeNotifications();
 });
 
-export { updateNotificationCount, fetchNotifications, initializeNotifications };
+export { updateNotificationCount, fetchNotifications, initializeNotifications, fetchNotificationCount };
