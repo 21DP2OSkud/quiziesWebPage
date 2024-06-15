@@ -281,6 +281,8 @@ function createRegisterUI() {
         }
 
         registerUser(formData);
+        closeUI(registerUI);
+        alert('Registrator successful!');
     });
 }
 

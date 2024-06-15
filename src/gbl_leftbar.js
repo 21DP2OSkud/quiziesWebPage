@@ -9,7 +9,14 @@ const {
     createAdminControlPanel,
 } = adminPanel;
 
+import * as userAuthentication from './gbl_user_authentication_ui.js';
+const {
+    createLogInUI,
+} = userAuthentication;
 
+//
+//
+//
 
 let isHovered = false;
 let labelHovered = false;
@@ -28,58 +35,6 @@ function addLeftBarIcon() {
     hrUpper.setAttribute("class", "upper-hr");
 
     const labelsDiv = document.createElement('div');
-
-    const myQuizzesLabel = createLeftBarLabel(1, 'My quizzes', "default");
-    myQuizzesLabel.addEventListener('click', function () {
-
-        if (sessionData.session) {
-            window.location.href = 'my-quizzes-template.html';
-        } else {
-            alert('Login to access my quizzes');
-        }
-
-    }); 
-
-    const dashboardLabel = createLeftBarLabel(2, 'Dashboard', "default");
-    dashboardLabel.addEventListener('click', function () {
-
-        if (sessionData.session) {
-            window.location.href = 'dashboard-template.html';
-        } else {
-            alert('Login to see the dashboard');
-        }
-
-    });
-    // admin stuff
-    if (sessionData.admin === true) {
-        console.log('Account is admin');
-        const hr1 = document.createElement('hr');
-        hr1.setAttribute('class', 'leftbar-hr');
-        const hr2 = document.createElement('hr');
-        hr2.setAttribute('class', 'leftbar-hr');
-        const settingLabel = createLeftBarLabel(5, 'Settings', "default");
-        const allUsersLabel = createLeftBarLabel(3, 'Admin panel', "admin");
-        allUsersLabel.addEventListener('click', function () {
-            createAdminControlPanel(); // Display admin panel
-        });
-        const adminLabel = createLeftBarLabel(4, 'Admin label', "admin");
-
-        labelsDiv.appendChild(myQuizzesLabel);
-        labelsDiv.appendChild(dashboardLabel);
-        labelsDiv.appendChild(hr1);
-        labelsDiv.appendChild(adminLabel);
-        labelsDiv.appendChild(allUsersLabel);
-        labelsDiv.appendChild(hr2);
-        labelsDiv.appendChild(settingLabel);
-    }
-    else {
-        console.log('Account not admin');
-        const settingLabel = createLeftBarLabel(3, 'Settings', "default");
-
-        labelsDiv.appendChild(myQuizzesLabel);
-        labelsDiv.appendChild(dashboardLabel);
-        labelsDiv.appendChild(settingLabel);
-    }
 
 
     // Setting attributes
@@ -102,6 +57,12 @@ function addLeftBarIcon() {
 
     labelsDiv.setAttribute('class', 'leftbar-labels mt-16 w-[100%] flex flex-col items-center');
 
+    const LoginLabel = createLeftBarLabel(0, 'Log In to see content', "default");
+    LoginLabel.addEventListener('click', function () {
+        createLogInUI();
+    });
+    labelsDiv.appendChild(LoginLabel);
+
     // Appending children
     leftBarIcon.appendChild(leftBarIconSVG);
     iconDiv.appendChild(leftBarIcon);
@@ -114,22 +75,6 @@ function addLeftBarIcon() {
     // Adding event listeners
     iconDiv.addEventListener('mouseover', expandLeftBar);
     iconDiv.addEventListener('mouseout', collapseLeftBar);
-
-    // Adding event listeners to labels
-    const labels = document.querySelectorAll('.leftbar-label, .leftbar-admin-label');
-    labels.forEach(label => {
-        label.addEventListener('mouseover', () => {
-            labelHovered = true;
-            clearTimeout(collapseTimeout);
-            expandLeftBarFully();
-        });
-        label.addEventListener('mouseout', () => {
-            labelHovered = false;
-            collapseTimeout = setTimeout(() => {
-                collapseLeftBar();
-            }, 500); // Wait for 0.5 second before collapsing
-        });
-    });
 
     // Add mouse event listener to left bar
     leftBarDiv.addEventListener('mouseenter', () => {
@@ -144,6 +89,90 @@ function addLeftBarIcon() {
             collapseLeftBar();
         }
     });
+
+    if (sessionData.session) {
+        LoginLabel.remove();
+
+        const myQuizzesLabel = createLeftBarLabel(1, 'My quizzes', "default");
+        myQuizzesLabel.addEventListener('click', function () {
+            window.location.href = 'my-quizzes-template.html';
+        }); 
+    
+        const dashboardLabel = createLeftBarLabel(2, 'Dashboard', "default");
+        dashboardLabel.addEventListener('click', function () {
+            window.location.href = 'dashboard-template.html';
+        });
+
+        const friendsLabel = createLeftBarLabel(3, 'Friends', "default");
+        friendsLabel.addEventListener('click', function () {
+            window.location.href = 'friends-template.html';
+        });
+    
+        // admin stuff
+        if (sessionData.admin === true) {
+            console.log('Account is admin');
+            const hr1 = document.createElement('hr');
+            hr1.setAttribute('class', 'leftbar-hr');
+            const hr2 = document.createElement('hr');
+            hr2.setAttribute('class', 'leftbar-hr');
+            const allUsersLabel = createLeftBarLabel(4, 'Admin panel', "admin");
+            allUsersLabel.addEventListener('click', function () {
+                createAdminControlPanel(); // Display admin panel
+            });
+            const adminLabel = createLeftBarLabel(5, 'Admin label', "admin");
+            const settingLabel = createLeftBarLabel(6, 'Settings', "default");
+    
+            labelsDiv.appendChild(myQuizzesLabel);
+            labelsDiv.appendChild(dashboardLabel);
+            labelsDiv.appendChild(friendsLabel);
+            labelsDiv.appendChild(hr1);
+            labelsDiv.appendChild(adminLabel);
+            labelsDiv.appendChild(allUsersLabel);
+            labelsDiv.appendChild(hr2);
+            labelsDiv.appendChild(settingLabel);
+        }
+        else {
+            console.log('Account not admin');
+            const settingLabel = createLeftBarLabel(4, 'Settings', "default");
+    
+            labelsDiv.appendChild(myQuizzesLabel);
+            labelsDiv.appendChild(dashboardLabel);
+            labelsDiv.appendChild(friendsLabel);
+            labelsDiv.appendChild(settingLabel);
+        }
+
+        // Adding event listeners to labels
+        const labels = document.querySelectorAll('.leftbar-label, .leftbar-admin-label');
+        labels.forEach(label => {
+            label.addEventListener('mouseover', () => {
+                labelHovered = true;
+                clearTimeout(collapseTimeout);
+                expandLeftBarFully();
+            });
+            label.addEventListener('mouseout', () => {
+                labelHovered = false;
+                collapseTimeout = setTimeout(() => {
+                    collapseLeftBar();
+                }, 500); // Wait for 0.5 second before collapsing
+            });
+        });
+
+        // Add mouse event listener to left bar
+        leftBarDiv.addEventListener('mouseenter', () => {
+            isHovered = true;
+            expandLeftBar();
+        });
+
+        leftBarDiv.addEventListener('mouseleave', () => {
+            isHovered = false;
+            if (!labelHovered) {
+                clearTimeout(collapseTimeout);
+                collapseLeftBar();
+            }
+        });
+    } else {
+        /* */
+    }
 }
 
 function createLeftBarLabel(id, text, type) {

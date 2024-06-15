@@ -457,9 +457,17 @@ app.get('/api/newest-quizzes', (req, res) => {
 // Admin requests
 //
 
-// all users records
+// users
 app.get('/api/users', (req, res) => {
-    con.query('SELECT * FROM users', (error, results) => {
+    const { user_id } = req.query; // Extract user_id from query params
+
+    // Construct SQL query to fetch users excluding the current user
+    let sql = 'SELECT * FROM users';
+    if (user_id) {
+        sql += ` WHERE user_id != ${mysql.escape(user_id)}`;
+    }
+
+    con.query(sql, (error, results) => {
         if (error) {
             console.error('Error fetching users:', error);
             res.status(500).json({ error: 'Internal server error' });
@@ -469,8 +477,134 @@ app.get('/api/users', (req, res) => {
     });
 });
 
+//
+// Friend requesting
+//
+
+// Notifications Endpoint
+app.get('/api/notifications', (req, res) => {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+        return res.status(400).json({ error: 'Missing user_id parameter' });
+    }
+
+    const query = `
+        SELECT * FROM notifications
+        WHERE user_id = ?
+        ORDER BY created_at DESC
+    `; // filter by created_at
+
+    con.query(query, [user_id], (error, results) => {
+        if (error) {
+            console.error('Error fetching notifications:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        res.json(results);
+    });
+});
 
 
+// Route to handle sending a friend request
+app.post('/api/friend_requests', (req, res) => {
+    const { sender_id, receiver_id } = req.body;
+
+    // Validate input (e.g., check if sender_id and receiver_id are valid)
+
+    const newFriendRequest = {
+        sender_id: sender_id,
+        receiver_id: receiver_id,
+        status: 'pending', // Initial status
+        sent_at: new Date() // Timestamp of when the request was sent
+    };
+
+    con.query('INSERT INTO friend_requests SET ?', newFriendRequest, (error, results) => {
+        if (error) {
+            console.error('Error creating friend request:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        console.log('Friend request created successfully');
+
+        // Respond with the newly created friend request object
+        res.status(201).json(newFriendRequest);
+
+        // Optionally, create a notification for the receiver here
+        createFriendRequestNotification(receiver_id, sender_id);
+    });
+});
+
+// Function to create notification for friend request
+function createFriendRequestNotification(receiver_id, sender_id) {
+    const newNotification = {
+        user_id: receiver_id,
+        type: 'friend_request',
+        sender_id: sender_id,
+        created_at: new Date() // Assuming your database handles timestamp
+    };
+
+    con.query('INSERT INTO notifications SET ?', newNotification, (error, results) => {
+        if (error) {
+            console.error('Error creating notification:', error);
+        } else {
+            console.log('Notification created successfully');
+        }
+    });
+}
+
+
+// API endpoint to get the count of notifications for a user
+app.get('/api/notifications/count', (req, res) => {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+        return res.status(400).json({ error: 'Missing user_id parameter' });
+    }
+
+    // Query to count notifications for the user
+    const query = `
+        SELECT COUNT(*) AS notificationCount
+        FROM notifications
+        WHERE user_id = ?
+    `;
+
+    con.query(query, [user_id], (error, results) => {
+        if (error) {
+            console.error('Error fetching notification count:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        const notificationCount = results[0].notificationCount;
+        res.json({ notificationCount });
+    });
+});
+
+
+// Endpoint to check for existing notifications
+app.get('/api/notifications/check', (req, res) => {
+    const { user_id, sender_id, type } = req.query;
+
+    // Query to check if a notification exists in the database
+    const query = `
+        SELECT *
+        FROM notifications
+        WHERE user_id = ? AND sender_id = ? AND type = ?
+    `;
+
+    con.query(query, [user_id, sender_id, type], (error, results) => {
+        if (error) {
+            console.error('Error checking existing notification:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        if (results.length > 0) {
+            res.status(200).json({ exists: true, notification: results[0] });
+        } else {
+            res.status(404).json({ exists: false });
+        }
+    });
+});
 
 
 // Start the server
