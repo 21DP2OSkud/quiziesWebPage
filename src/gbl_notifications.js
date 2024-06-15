@@ -3,7 +3,6 @@ import * as session from './gbl_check_session.js';
 const { checkSession } = session;
 const sessionData = checkSession(); // session data
 
-let notificationCount = 0; // Initialize notification count
 let IP = "81.198.7.240";
 
 function updateNotificationCount(count) {
@@ -21,29 +20,145 @@ function updateNotificationCount(count) {
     }
 }
 
-function fetchNotificationCount(user_id) {
-    const url = `http://${IP}:3000/api/notifications/count?user_id=${user_id}`;
+async function fetchNotifications(user_id) {
+    try {
+        const response = await fetch(`http://${IP}:3000/api/notifications?user_id=${user_id}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch notifications');
+        }
+        const notifications = await response.json();
+        return notifications;
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        throw error;
+    }
+}
 
-    return fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+//
+//
+//
+
+let notificationsPanel = null;
+
+function toggleNotificationsPanel(notifications) {
+    // Close existing panel if it's already open
+    if (notificationsPanel) {
+        notificationsPanel.classList.remove('notifications-panel-open');
+        setTimeout(() => {
+            notificationsPanel.remove();
+            notificationsPanel = null;
+        }, 300); // Adjust timing to match CSS transition duration
+        return;
+    }
+
+    notificationsPanel = document.createElement('div');
+    notificationsPanel.classList.add('notifications-panel', 'bg-white', 'shadow-md', 'fixed', 'right-0', 'top-0', 'bottom-0', 'z-50', 'overflow-hidden');
+
+    const panelContent = document.createElement('div');
+    panelContent.classList.add('notifications-panel-content', 'overflow-y-auto', 'h-full', 'w-full');
+
+    if (notifications.length === 0) {
+        const noNotificationsText = document.createElement('p');
+        noNotificationsText.innerText = 'No notifications yet';
+        panelContent.appendChild(noNotificationsText);
+    } else {
+        notifications.forEach(notification => {
+            const notificationElement = document.createElement('div');
+            notificationElement.classList.add('notification', 'p-4', 'border-b', 'border-gray-200');
+
+            const description = document.createElement('p');
+            description.classList.add('text-sm', 'text-gray-700', 'mb-2');
+            
+            if (notification.type === 'friend_request') {
+                description.innerText = `${notification.username} wants to be friends with you!`;
+                
+                const userProfileDiv = document.createElement('div');
+                userProfileDiv.classList.add('user-profile', 'flex', 'items-center', 'mb-2');
+
+                const profileImage = document.createElement('img');
+                profileImage.src = notification.profile_image_url;
+                profileImage.alt = notification.username;
+                profileImage.classList.add('rounded-full', 'w-12', 'h-12', 'mr-4');
+                userProfileDiv.appendChild(profileImage);
+
+                const userDetails = document.createElement('div');
+                userDetails.innerHTML = `
+                    <p class="font-bold">${notification.username}</p>
+                    <p class="text-xs text-gray-500">${new Date(notification.created_at).toLocaleDateString()}</p>
+                `;
+                userProfileDiv.appendChild(userDetails);
+
+                notificationElement.appendChild(userProfileDiv);
+
+                const actionButtonsDiv = document.createElement('div');
+                actionButtonsDiv.classList.add('action-buttons', 'flex', 'gap-2', 'mt-2');
+
+                const acceptButton = document.createElement('button');
+                acceptButton.innerText = 'Accept';
+                acceptButton.classList.add('btn', 'btn-accept');
+                acceptButton.addEventListener('click', () => {
+                    handleAccept(notification.request_id);
+                });
+                actionButtonsDiv.appendChild(acceptButton);
+
+                const declineButton = document.createElement('button');
+                declineButton.innerText = 'Decline';
+                declineButton.classList.add('btn', 'btn-decline');
+                declineButton.addEventListener('click', () => {
+                    handleDecline(notification.request_id);
+                });
+                actionButtonsDiv.appendChild(declineButton);
+
+                notificationElement.appendChild(description);
+                notificationElement.appendChild(actionButtonsDiv);
+            } else {
+                description.innerText = `You have a new notification: ${notification.type}`;
+                notificationElement.appendChild(description);
             }
-            return response.json();
-        })
-        .then(data => {
-            localStorage.setItem('notificationCount', JSON.stringify(data.notificationCount));
-            return data.notificationCount; // Return notification count if successful
+
+            panelContent.appendChild(notificationElement);
+        });
+    }
+
+    notificationsPanel.appendChild(panelContent);
+    document.body.appendChild(notificationsPanel);
+
+    // Add a short delay to trigger CSS animation
+    setTimeout(() => {
+        notificationsPanel.classList.add('notifications-panel-open');
+    }, 50);
+}
+
+function handleAccept(request_id) {
+    // Implement accept logic here
+    console.log(`Accepted friend request with request_id: ${request_id}`);
+    // Optionally update UI or perform further actions
+}
+
+function handleDecline(request_id) {
+    // Implement decline logic here
+    console.log(`Declined friend request with request_id: ${request_id}`);
+    // Optionally update UI or perform further actions
+}
+
+function openNotificationsPanel() {
+    fetchNotifications(sessionData.userProfile.user_id)
+        .then(notifications => {
+            toggleNotificationsPanel(notifications);
         })
         .catch(error => {
-            console.error('Error fetching notification count:', error);
-            throw error; // Propagate the error
+            console.error('Error fetching notifications:', error);
         });
 }
 
+//
+//
+//
 
 function initializeNotifications() {
     const profileAndNotifications = document.getElementById('profile-and_notifications');
+    const currentPage = window.location.pathname;
+    console.log(currentPage);
 
     const bellIcon = document.createElement('button');
     bellIcon.type = 'button';
@@ -53,151 +168,68 @@ function initializeNotifications() {
         <span id="notification-badge" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full"></span>
     `;
 
+    // Function to add hover effect
+    function addHoverEffect(element, hoverColor) {
+        element.addEventListener('mouseover', function() {
+            element.style.backgroundColor = hoverColor;
+        });
+
+        element.addEventListener('mouseout', function() {
+            element.style.backgroundColor = ''; // Restore to default or remove inline style
+        });
+    }
+
+    switch (currentPage) {
+        case "/src/index.html":
+            console.log("Current page is services.html");
+            bellIcon.style.backgroundColor = "rgb(220,252,231)";
+            addHoverEffect(bellIcon, "rgb(200, 252, 220)")
+            break;
+        case "/src/about.html":
+            console.log("Current page is index.html");
+            bellIcon.style.backgroundColor = "rgb(254,249,195)";
+            addHoverEffect(bellIcon, "rgb(255, 240, 170)")
+            break;
+        case "/src/services.html":
+            console.log("Current page is about.html");
+            bellIcon.style.backgroundColor = "rgb(252,231,243)";
+            addHoverEffect(bellIcon, "rgb(252, 217, 237)")
+            break;
+        case "/src/quizzes.html":
+            console.log("Current page is quizzes.html");
+            bellIcon.style.backgroundColor = "rgb(219,234,254)";
+            addHoverEffect(bellIcon, "rgb(207, 227, 253)")
+            break;
+        default:
+            console.log("Current page is not handled by this switch statement");
+            bellIcon.style.backgroundColor = "rgb(31,41,55)";
+            addHoverEffect(bellIcon, "#2d3748")
+    }
+
     bellIcon.addEventListener('click', () => {
-        console.log(sessionData.notifications);
         openNotificationsPanel();
     });
 
     profileAndNotifications.insertBefore(bellIcon, profileAndNotifications.firstChild);
 
-    const user_id = sessionData.userProfile.user_id; // Get current user's ID
     const storedNotificationCount = JSON.parse(localStorage.getItem('notificationCount'));
 
     if (storedNotificationCount !== null) {
         updateNotificationCount(storedNotificationCount);
     }
 
-    fetchNotificationCount(user_id)
-        .then(data => {
-            updateNotificationCount(data);
+    fetchNotifications(sessionData.userProfile.user_id)
+        .then(notifications => {
+            updateNotificationCount(notifications.length);
         })
         .catch(error => {
             console.error('Error initializing notifications:', error);
+            // Optionally handle error display or retry logic here
         });
 }
-
-
-function fetchNotifications(user_id) {
-    const url = `http://${IP}:3000/api/notifications?user_id=${user_id}`;
-
-    return fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            return data; // Return notifications data
-        })
-        .catch(error => {
-            console.error('Error fetching notifications:', error);
-            throw error; // Propagate the error
-        });
-}
-
-
-
-function openNotificationsPanel() {
-    const notificationsPanel = document.createElement('div');
-    notificationsPanel.classList.add('notifications-panel', 'p-4', 'bg-white', 'shadow-md', 'absolute', 'right-0', 'top-12', 'z-10');
-
-    fetchNotifications(sessionData.userProfile.user_id)
-        .then(notifications => {
-            if (notifications.length === 0) {
-                const noNotificationsText = document.createElement('p');
-                noNotificationsText.innerText = 'No notifications yet';
-                notificationsPanel.appendChild(noNotificationsText);
-            } else {
-                notifications.forEach(notification => {
-                    const notificationElement = document.createElement('div');
-                    notificationElement.classList.add('notification', 'p-2', 'mb-2', 'border', 'border-gray-200', 'rounded');
-                    notificationElement.innerText = `Notification: ${notification.type} from user ${notification.sender_id}`;
-
-                    notificationsPanel.appendChild(notificationElement);
-                });
-            }
-
-            const closeButton = document.createElement('button');
-            closeButton.innerText = 'Close';
-            closeButton.classList.add('text-sm', 'text-gray-500', 'mt-2', 'px-4', 'py-2', 'border', 'border-gray-300', 'rounded', 'hover:bg-gray-100', 'focus:outline-none');
-            closeButton.addEventListener('click', () => {
-                notificationsPanel.remove();
-            });
-
-            notificationsPanel.appendChild(closeButton);
-            document.body.appendChild(notificationsPanel);
-        })
-        .catch(error => {
-            console.error('Error fetching notifications:', error);
-        });
-}
-
-
-// Function to create notification for friend request on the client side
-function createFriendRequestNotification(receiverUserId, senderUserId) {
-    const notificationData = {
-        user_id: receiverUserId,
-        type: 'friend_request',
-        sender_id: senderUserId
-    };
-
-    const checkUrl = `http://${IP}:3000/api/notifications/check?user_id=${receiverUserId}&sender_id=${senderUserId}&type=friend_request`;
-
-    return fetch(checkUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to check existing notifications');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Check existing notification response:', data);
-            if (data.exists) {
-                console.log('Notification already exists for this event');
-                return null; // Return null to indicate notification exists
-            }
-
-            // If no existing notification, create a new one
-            return fetch(`http://${IP}:3000/api/notifications`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(notificationData)
-            });
-        })
-        .then(response => {
-            if (response && !response.ok) {
-                throw new Error('Failed to create notification');
-            }
-            return response ? response.json() : null;
-        })
-        .then(data => {
-            if (data === null) {
-                console.log('No new notification created because one already exists');
-                return; // Early return as no further processing is needed
-            }
-            console.log('Notification created successfully:', data);
-
-            // Fetch the latest notification count and update localStorage if needed
-            // return fetchNotificationCount(receiverUserId)
-            //     .then(count => {
-            //         localStorage.setItem('notificationCount', JSON.stringify(count));
-            //     })
-            //     .catch(error => {
-            //         console.error('Error updating notification count in localStorage:', error);
-            //     });
-        })
-        .catch(error => {
-            console.error('Error creating notification:', error);
-            throw error; // Propagate the error
-        });
-}
-
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeNotifications();
 });
 
-export { updateNotificationCount, fetchNotificationCount, createFriendRequestNotification, initializeNotifications };
+export { updateNotificationCount, fetchNotifications, initializeNotifications };

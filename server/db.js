@@ -481,30 +481,6 @@ app.get('/api/users', (req, res) => {
 // Friend requesting
 //
 
-// Notifications Endpoint
-app.get('/api/notifications', (req, res) => {
-    const { user_id } = req.query;
-
-    if (!user_id) {
-        return res.status(400).json({ error: 'Missing user_id parameter' });
-    }
-
-    const query = `
-        SELECT * FROM notifications
-        WHERE user_id = ?
-        ORDER BY created_at DESC
-    `; // filter by created_at
-
-    con.query(query, [user_id], (error, results) => {
-        if (error) {
-            console.error('Error fetching notifications:', error);
-            return res.status(500).json({ error: 'Internal server error' });
-        }
-
-        res.json(results);
-    });
-});
-
 
 // Route to handle sending a friend request
 app.post('/api/friend_requests', (req, res) => {
@@ -527,31 +503,80 @@ app.post('/api/friend_requests', (req, res) => {
 
         console.log('Friend request created successfully');
 
+        // Create a notification for the receiver
+        createFriendRequestNotification(receiver_id, sender_id);
+
         // Respond with the newly created friend request object
         res.status(201).json(newFriendRequest);
-
-        // Optionally, create a notification for the receiver here
-        createFriendRequestNotification(receiver_id, sender_id);
     });
 });
 
+
 // Function to create notification for friend request
 function createFriendRequestNotification(receiver_id, sender_id) {
-    const newNotification = {
-        user_id: receiver_id,
-        type: 'friend_request',
-        sender_id: sender_id,
-        created_at: new Date() // Assuming your database handles timestamp
-    };
+    // First, fetch the request_id from friend_requests table
+    const query = `
+        SELECT request_id
+        FROM friend_requests
+        WHERE sender_id = ? AND receiver_id = ? AND status = 'pending'
+    `;
 
-    con.query('INSERT INTO notifications SET ?', newNotification, (error, results) => {
+    con.query(query, [sender_id, receiver_id], (error, results) => {
         if (error) {
-            console.error('Error creating notification:', error);
-        } else {
-            console.log('Notification created successfully');
+            console.error('Error fetching friend request details:', error);
+            return;
+        }
+
+        if (results.length > 0) {
+            const request_id = results[0].request_id;
+
+            const newNotification = {
+                user_id: receiver_id,
+                type: 'friend_request',
+                request_id: request_id,
+                created_at: new Date() // Assuming your database handles timestamp
+            };
+
+            con.query('INSERT INTO notifications SET ?', newNotification, (error, results) => {
+                if (error) {
+                    console.error('Error creating notification:', error);
+                } else {
+                    console.log('Notification created successfully');
+                }
+            });
         }
     });
 }
+
+
+// Notifications Endpoint
+app.get('/api/notifications', (req, res) => {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+        return res.status(400).json({ error: 'Missing user_id parameter' });
+    }
+
+    const query = `
+        SELECT n.notification_id, n.user_id, n.type, n.request_id, n.is_read, n.created_at,
+               fr.sender_id, u.username, u.profile_image_url
+        FROM notifications n
+        JOIN friend_requests fr ON n.request_id = fr.request_id
+        JOIN users u ON fr.sender_id = u.user_id
+        WHERE n.user_id = ?
+        ORDER BY n.created_at DESC
+    `; // retrieves created_at, is_read, notification_id, profile_image_url, request_id, sender_id, type, user_id, username
+
+
+    con.query(query, [user_id], (error, results) => {
+        if (error) {
+            console.error('Error fetching notifications:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        res.json(results);
+    });
+});
 
 
 // API endpoint to get the count of notifications for a user
@@ -585,6 +610,11 @@ app.get('/api/notifications/count', (req, res) => {
 app.get('/api/notifications/check', (req, res) => {
     const { user_id, sender_id, type } = req.query;
 
+    // Validate inputs
+    if (!user_id || !sender_id || !type) {
+        return res.status(400).json({ error: 'Missing required parameters' });
+    }
+
     // Query to check if a notification exists in the database
     const query = `
         SELECT *
@@ -605,6 +635,7 @@ app.get('/api/notifications/check', (req, res) => {
         }
     });
 });
+
 
 
 // Start the server

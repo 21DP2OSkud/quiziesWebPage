@@ -1,28 +1,16 @@
 import * as ui from './gbl_create_ui.js';
-const { 
-    createOverlay,
-    closeUI
-} = ui;
+const { createOverlay, closeUI } = ui;
 
 import * as session from './gbl_check_session.js';
-const {
-    checkSession,
-} = session;
+const { checkSession } = session;
 const sessionData = checkSession(); // session data
 
 import * as notifications from './gbl_notifications.js';
-const { 
-    updateNotificationCount, 
-    fetchNotificationCount,
-    createFriendRequestNotification,
-} = notifications
+const { updateNotificationCount, fetchNotificationCount } = notifications;
 
 let IP = "81.198.7.240";
 
 document.addEventListener('DOMContentLoaded', () => {
-    const user_id = getUserId(); // Implement this function to get the current user ID
-    //loadFriends(user_id);
-
     document.getElementById('add-friend-button').addEventListener('click', () => {
         showAddFriendUI();
     });
@@ -37,10 +25,10 @@ function getUserId() {
 
 function showAddFriendUI() {
     createOverlay();
-    
+
     const ui = document.createElement('div');
     ui.className = 'ui all-users-ui w-[1080px] h-[720px]';
-    
+
     const closeButton = document.createElement('button');
     closeButton.innerText = 'Close';
     closeButton.addEventListener('click', () => closeUI(ui));
@@ -100,7 +88,6 @@ function displayAllUsers(users) {
     });
 }
 
-
 // Function to send a friend request from the client-side
 function sendFriendRequest(senderId, receiverId) {
     const friendRequestData = {
@@ -125,10 +112,17 @@ function sendFriendRequest(senderId, receiverId) {
     })
     .then(data => {
         console.log('Friend request sent successfully:', data);
-        // Optionally handle notification creation on the client side if needed
-        // createFriendRequestNotification(receiverId, senderId);
+        // Optionally update UI or handle success message
+        fetchNotificationCount(sessionData.userProfile.user_id)
+            .then(data => {
+                updateNotificationCount(data);
+            })
+            .catch(error => {
+                console.error('Error updating notification count:', error);
+            });
     })
     .catch(error => {
         console.error('Error in friend request flow:', error);
+        // Optionally display error to user
     });
 }
