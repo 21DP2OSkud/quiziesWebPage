@@ -70,7 +70,9 @@ body {
     overflow: hidden;
 }
 
+/* Notifications panel open state */
 .notifications-panel-open {
+    transition: transform 0.3s ease;
     transform: translateX(0);
 }
 
@@ -271,6 +273,17 @@ body {
     backdrop-filter: blur(8px); /* Apply blur effect */
     z-index: 998; /* Ensure the overlay is above all other content */
 }
+
+/* For notifications */
+.notifications-overlay {
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.notifications-overlay-active {
+    opacity: 1;
+}
+
 /*
 // AUTHENTICATION UI
 */

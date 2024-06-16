@@ -109,18 +109,27 @@ async function fetchNotificationCount(user_id) {
 //
 
 let notificationsPanel = null;
+let overlay = null;
 
 function toggleNotificationsPanel(notifications) {
     // Close existing panel if it's already open
     if (notificationsPanel) {
         notificationsPanel.classList.remove('notifications-panel-open');
+        overlay.classList.remove('notifications-overlay-active');
         setTimeout(() => {
             notificationsPanel.remove();
+            overlay.remove();
             notificationsPanel = null;
+            overlay = null;
         }, 300); // Adjust timing to match CSS transition duration
         return;
     }
 
+    // Create overlay
+    overlay = document.createElement('div');
+    overlay.classList.add('notifications-overlay', 'fixed', 'inset-0', 'bg-black', 'bg-opacity-50', 'z-40');
+
+    // Create notifications panel
     notificationsPanel = document.createElement('div');
     notificationsPanel.classList.add('notifications-panel', 'bg-white', 'shadow-md', 'fixed', 'right-0', 'top-0', 'bottom-0', 'z-50', 'overflow-hidden');
 
@@ -197,14 +206,20 @@ function toggleNotificationsPanel(notifications) {
     }
 
     notificationsPanel.appendChild(panelContent);
+    document.body.appendChild(overlay);
     document.body.appendChild(notificationsPanel);
 
     // Add a short delay to trigger CSS animation
     setTimeout(() => {
         notificationsPanel.classList.add('notifications-panel-open');
+        overlay.classList.add('notifications-overlay-active');
     }, 50);
-}
 
+    // Close panel when clicking on the overlay
+    overlay.addEventListener('click', () => {
+        toggleNotificationsPanel([]);
+    });
+}
 
 function openNotificationsPanel() {
     fetchNotifications(sessionData.userProfile.user_id)
@@ -217,11 +232,13 @@ function openNotificationsPanel() {
         });
 }
 
+
 //
 //
 //
 
 function initializeNotifications() {
+    
     const profileAndNotifications = document.getElementById('profile-and_notifications');
     const currentPage = window.location.pathname;
 

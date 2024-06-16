@@ -668,6 +668,10 @@ video {
   z-index: 10;
 }
 
+.z-40 {
+  z-index: 40;
+}
+
 .z-50 {
   z-index: 50;
 }
@@ -904,10 +908,6 @@ video {
   width: 30%;
 }
 
-.w-\[600px\] {
-  width: 600px;
-}
-
 .w-\[70\%\] {
   width: 70%;
 }
@@ -1109,6 +1109,11 @@ video {
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
+.bg-black {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+}
+
 .bg-blue-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(219 234 254 / var(--tw-bg-opacity));
@@ -1196,6 +1201,10 @@ video {
 
 .bg-opacity-0 {
   --tw-bg-opacity: 0;
+}
+
+.bg-opacity-50 {
+  --tw-bg-opacity: 0.5;
 }
 
 .bg-opacity-80 {
@@ -1579,7 +1588,10 @@ body {
   overflow: hidden;
 }
 
+/* Notifications panel open state */
+
 .notifications-panel-open {
+  transition: transform 0.3s ease;
   transform: translateX(0);
 }
 
@@ -1791,6 +1803,17 @@ body {
   /* Apply blur effect */
   z-index: 998;
   /* Ensure the overlay is above all other content */
+}
+
+/* For notifications */
+
+.notifications-overlay {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.notifications-overlay-active {
+  opacity: 1;
 }
 
 /*
