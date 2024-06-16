@@ -15,9 +15,12 @@ const {
 */
 
 let IP = "81.198.7.240";
+
 // Function to fetch users from the server
 function fetchUsers() {
-    return fetch(`http://${IP}:3000/api/users`)
+    const url = `http://${IP}:3000/api/users/all`;
+
+    return fetch(url)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -25,7 +28,8 @@ function fetchUsers() {
             return response.json();
         })
         .catch(error => {
-            console.error('Error fetching users:', error);
+            console.error('Error fetching all users:', error);
+            throw error; // Propagate the error to handle it in the calling function
         });
 }
 

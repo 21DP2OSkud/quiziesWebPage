@@ -457,17 +457,72 @@ app.get('/api/newest-quizzes', (req, res) => {
 // Admin requests
 //
 
-// users
-app.get('/api/users', (req, res) => {
-    const { user_id } = req.query; // Extract user_id from query params
+// Endpoint to fetch all records from users table
+app.get('/api/users/all', (req, res) => {
+    const query = `
+        SELECT *
+        FROM users
+    `;
 
-    // Construct SQL query to fetch users excluding the current user
-    let sql = 'SELECT * FROM users';
-    if (user_id) {
-        sql += ` WHERE user_id != ${mysql.escape(user_id)}`;
+    con.query(query, (error, results) => {
+        if (error) {
+            console.error('Error fetching all users:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+// Route to get friends of the current user
+app.get('/api/friends', (req, res) => {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+        return res.status(400).json({ error: 'Missing user_id parameter' });
     }
 
-    con.query(sql, (error, results) => {
+    const query = `
+        SELECT DISTINCT u.user_id, u.username, u.profile_image_url
+        FROM users u
+        JOIN friends f ON (u.user_id = f.user_id OR u.user_id = f.friend_id)
+        WHERE (f.user_id = ? OR f.friend_id = ?) AND u.user_id != ?
+    `;
+
+    con.query(query, [user_id, user_id, user_id], (error, results) => {
+        if (error) {
+            console.error('Error fetching friends:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        res.json(results);
+    });
+});
+
+//
+// Friend requesting
+//
+
+// Endpoint to fetch users excluding the current user and their friends
+app.get('/api/users', (req, res) => {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+        return res.status(400).json({ error: 'Missing user_id parameter' });
+    }
+
+    const query = `
+        SELECT u.user_id, u.username, u.profile_image_url
+        FROM users u
+        WHERE u.user_id != ? AND u.user_id NOT IN (
+            SELECT friend_id FROM friends WHERE user_id = ?
+            UNION
+            SELECT user_id FROM friends WHERE friend_id = ?
+        )
+    `;
+
+    con.query(query, [user_id, user_id, user_id], (error, results) => {
         if (error) {
             console.error('Error fetching users:', error);
             res.status(500).json({ error: 'Internal server error' });
@@ -477,37 +532,67 @@ app.get('/api/users', (req, res) => {
     });
 });
 
-//
-// Friend requesting
-//
-
-
 // Route to handle sending a friend request
 app.post('/api/friend_requests', (req, res) => {
     const { sender_id, receiver_id } = req.body;
 
     // Validate input (e.g., check if sender_id and receiver_id are valid)
 
-    const newFriendRequest = {
-        sender_id: sender_id,
-        receiver_id: receiver_id,
-        status: 'pending', // Initial status
-        sent_at: new Date() // Timestamp of when the request was sent
-    };
+    // Check if users are already friends
+    const checkFriendshipQuery = `
+        SELECT * FROM friends
+        WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)
+    `;
 
-    con.query('INSERT INTO friend_requests SET ?', newFriendRequest, (error, results) => {
+    con.query(checkFriendshipQuery, [sender_id, receiver_id, receiver_id, sender_id], (error, results) => {
         if (error) {
-            console.error('Error creating friend request:', error);
+            console.error('Error checking friendship status:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
 
-        console.log('Friend request created successfully');
+        if (results.length > 0) {
+            return res.status(400).json({ error: 'Users are already friends' });
+        }
 
-        // Create a notification for the receiver
-        createFriendRequestNotification(receiver_id, sender_id);
+        // Check if a pending friend request already exists
+        const checkRequestQuery = `
+            SELECT * FROM friend_requests
+            WHERE sender_id = ? AND receiver_id = ? AND status = 'pending'
+        `;
 
-        // Respond with the newly created friend request object
-        res.status(201).json(newFriendRequest);
+        con.query(checkRequestQuery, [sender_id, receiver_id], (error, results) => {
+            if (error) {
+                console.error('Error checking friend request status:', error);
+                return res.status(500).json({ error: 'Internal server error' });
+            }
+
+            if (results.length > 0) {
+                return res.status(400).json({ error: 'Friend request already sent' });
+            }
+
+            // Proceed with creating the friend request
+            const newFriendRequest = {
+                sender_id: sender_id,
+                receiver_id: receiver_id,
+                status: 'pending', // Initial status
+                sent_at: new Date() // Timestamp of when the request was sent
+            };
+
+            con.query('INSERT INTO friend_requests SET ?', newFriendRequest, (error, results) => {
+                if (error) {
+                    console.error('Error creating friend request:', error);
+                    return res.status(500).json({ error: 'Internal server error' });
+                }
+
+                console.log('Friend request created successfully');
+
+                // Create a notification for the receiver
+                createFriendRequestNotification(receiver_id, sender_id);
+
+                // Respond with the newly created friend request object
+                res.status(201).json(newFriendRequest);
+            });
+        });
     });
 });
 
@@ -549,6 +634,105 @@ function createFriendRequestNotification(receiver_id, sender_id) {
 }
 
 
+app.post('/api/friend-request/accept', (req, res) => {
+    const { request_id } = req.body;
+
+    con.beginTransaction(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        const queryUpdateRequest = `UPDATE friend_requests SET status = 'accepted' WHERE request_id = ?`;
+        con.query(queryUpdateRequest, [request_id], (error, results) => {
+            if (error) {
+                return con.rollback(() => {
+                    res.status(500).json({ error: 'Internal server error' });
+                });
+            }
+
+            const queryGetRequest = `SELECT sender_id, receiver_id FROM friend_requests WHERE request_id = ?`;
+            con.query(queryGetRequest, [request_id], (error, results) => {
+                if (error) {
+                    return con.rollback(() => {
+                        res.status(500).json({ error: 'Internal server error' });
+                    });
+                }
+
+                const { sender_id, receiver_id } = results[0];
+
+                const queryInsertFriends = `INSERT INTO friends (user_id, friend_id, friends_from) VALUES (?, ?, NOW()), (?, ?, NOW())`;
+                con.query(queryInsertFriends, [sender_id, receiver_id, receiver_id, sender_id], (error, results) => {
+                    if (error) {
+                        return con.rollback(() => {
+                            res.status(500).json({ error: 'Internal server error' });
+                        });
+                    }
+
+                    const queryDeleteNotification = `DELETE FROM notifications WHERE request_id = ?`;
+                    con.query(queryDeleteNotification, [request_id], (error, results) => {
+                        if (error) {
+                            return con.rollback(() => {
+                                res.status(500).json({ error: 'Internal server error' });
+                            });
+                        }
+
+                        con.commit(err => {
+                            if (err) {
+                                return con.rollback(() => {
+                                    res.status(500).json({ error: 'Internal server error' });
+                                });
+                            }
+
+                            res.json({ success: true });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+
+
+// Decline friend request
+app.post('/api/friend-request/decline', (req, res) => {
+    const { request_id } = req.body;
+
+    con.beginTransaction(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+
+        const queryUpdateRequest = `UPDATE friend_requests SET status = 'declined' WHERE request_id = ?`;
+        con.query(queryUpdateRequest, [request_id], (error, results) => {
+            if (error) {
+                return con.rollback(() => {
+                    res.status(500).json({ error: 'Internal server error' });
+                });
+            }
+
+            const queryDeleteNotification = `DELETE FROM notifications WHERE request_id = ?`;
+            con.query(queryDeleteNotification, [request_id], (error, results) => {
+                if (error) {
+                    return con.rollback(() => {
+                        res.status(500).json({ error: 'Internal server error' });
+                    });
+                }
+
+                con.commit(err => {
+                    if (err) {
+                        return con.rollback(() => {
+                            res.status(500).json({ error: 'Internal server error' });
+                        });
+                    }
+
+                    res.json({ success: true });
+                });
+            });
+        });
+    });
+});
+
+
 // Notifications Endpoint
 app.get('/api/notifications', (req, res) => {
     const { user_id } = req.query;
@@ -563,10 +747,9 @@ app.get('/api/notifications', (req, res) => {
         FROM notifications n
         JOIN friend_requests fr ON n.request_id = fr.request_id
         JOIN users u ON fr.sender_id = u.user_id
-        WHERE n.user_id = ?
+        WHERE n.user_id = ? AND fr.status = 'pending'
         ORDER BY n.created_at DESC
-    `; // retrieves created_at, is_read, notification_id, profile_image_url, request_id, sender_id, type, user_id, username
-
+    `;
 
     con.query(query, [user_id], (error, results) => {
         if (error) {

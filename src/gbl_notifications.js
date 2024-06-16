@@ -5,6 +5,60 @@ const sessionData = checkSession(); // session data
 
 let IP = "81.198.7.240";
 
+
+async function handleAccept(request_id) {
+    try {
+        const response = await fetch(`http://${IP}:3000/api/friend-request/accept`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ request_id })
+        });
+
+        if (response.ok) {
+            console.log(`Accepted friend request with request_id: ${request_id}`);
+            // Optionally update UI or perform further actions
+            fetchNotifications(sessionData.userProfile.user_id)
+                .then(notifications => {
+                    toggleNotificationsPanel(notifications);
+                    updateNotificationCount(notifications.length);
+                });
+        } else {
+            throw new Error('Failed to accept friend request');
+        }
+    } catch (error) {
+        console.error('Error accepting friend request:', error);
+    }
+}
+
+async function handleDecline(request_id) {
+    try {
+        const response = await fetch(`http://${IP}:3000/api/friend-request/decline`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ request_id })
+        });
+
+        if (response.ok) {
+            console.log(`Declined friend request with request_id: ${request_id}`);
+            // Optionally update UI or perform further actions
+            fetchNotifications(sessionData.userProfile.user_id)
+                .then(notifications => {
+                    toggleNotificationsPanel(notifications);
+                    updateNotificationCount(notifications.length);
+                });
+        } else {
+            throw new Error('Failed to decline friend request');
+        }
+    } catch (error) {
+        console.error('Error declining friend request:', error);
+    }
+}
+
+
 function updateNotificationCount(count) {
     const notificationBadge = document.getElementById('notification-badge');
     if (count > 0) {
@@ -82,12 +136,16 @@ function toggleNotificationsPanel(notifications) {
             const notificationElement = document.createElement('div');
             notificationElement.classList.add('notification', 'p-4', 'border-b', 'border-gray-200');
 
+            const typeElement = document.createElement('p');
+            typeElement.classList.add('text-xs', 'text-gray-500', 'mb-1');
+            typeElement.innerText = `Type: ${notification.type}`;
+
             const description = document.createElement('p');
             description.classList.add('text-sm', 'text-gray-700', 'mb-2');
-            
+
             if (notification.type === 'friend_request') {
                 description.innerText = `${notification.username} wants to be friends with you!`;
-                
+
                 const userProfileDiv = document.createElement('div');
                 userProfileDiv.classList.add('user-profile', 'flex', 'items-center', 'mb-2');
 
@@ -104,6 +162,7 @@ function toggleNotificationsPanel(notifications) {
                 `;
                 userProfileDiv.appendChild(userDetails);
 
+                notificationElement.appendChild(typeElement);
                 notificationElement.appendChild(userProfileDiv);
 
                 const actionButtonsDiv = document.createElement('div');
@@ -129,6 +188,7 @@ function toggleNotificationsPanel(notifications) {
                 notificationElement.appendChild(actionButtonsDiv);
             } else {
                 description.innerText = `You have a new notification: ${notification.type}`;
+                notificationElement.appendChild(typeElement);
                 notificationElement.appendChild(description);
             }
 
@@ -145,22 +205,12 @@ function toggleNotificationsPanel(notifications) {
     }, 50);
 }
 
-function handleAccept(request_id) {
-    // Implement accept logic here
-    console.log(`Accepted friend request with request_id: ${request_id}`);
-    // Optionally update UI or perform further actions
-}
-
-function handleDecline(request_id) {
-    // Implement decline logic here
-    console.log(`Declined friend request with request_id: ${request_id}`);
-    // Optionally update UI or perform further actions
-}
 
 function openNotificationsPanel() {
     fetchNotifications(sessionData.userProfile.user_id)
         .then(notifications => {
             toggleNotificationsPanel(notifications);
+            console.log(notifications);
         })
         .catch(error => {
             console.error('Error fetching notifications:', error);

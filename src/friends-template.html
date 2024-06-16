@@ -16,6 +16,9 @@
         <script src="./gbl_leftbar.js" type="module"></script>
         <!-- -->
         <script src="./gbl_notifications.js" type="module"></script> <!-- Include the notifications script -->
+
+        <!-- Local js -->
+        <script src="./friends_loader.js" type="module"></script>
     
         <title>Tailwind CSS Test</title>
     </head>
@@ -66,12 +69,13 @@
         </nav>
 
         <div class="w-screen" id="page-content">
+            <button id="add-friend-button" class="btn">Find Friends</button>
             <!-- Friends content will be loaded here -->
+            <div class="my-friends">
+                <label class="friends-label">My Friends</label>
+                <div id="friends-container" class="friends-container"></div>
+            </div>
         </div>
-
-        <button id="add-friend-button" class="btn btn-primary">Add Friend</button> <!-- Add this button -->
         
-        <script src="./friends_loader.js" type="module"></script>
-        <!-- <script src="./friends_display.js"></script> -->
     </body>
 </html>

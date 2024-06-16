@@ -1012,82 +1012,110 @@ body {
 // Display all users | friends-template.html
 */
 
-.all-users-ui {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    padding: 1rem;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000; /* Ensure it's on top of other elements */
-}
-
-.all-users-ui button {
+/* Find Friend Button */
+#add-friend-button {
+    display: block;
+    margin: 1rem auto; /* Center the button */
     padding: 0.5rem 1rem;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 0.25rem;
     cursor: pointer;
-    margin-top: 0.5rem;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
 }
 
-.all-users-ui button:hover {
+#add-friend-button:hover {
     background-color: #0056b3;
 }
 
-.all-users-ui .close-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.25rem;
-    color: #6b7280;
-}
-
-.all-users-ui .close-button:hover {
-    color: #000;
-}
-
-
 /* User Card */
-.all-users-ui .user-card {
+
+
+
+
+
+
+/* Friends List */
+.my-friends {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.friends-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+
+/* Friend card */
+.friends-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem; /* Increased gap between friend cards */
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.friend-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 1rem;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+    backdrop-filter: blur(10px); /* Backdrop blur effect */
     border-radius: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 200px;
-    margin-bottom: 1rem; /* Adjust spacing between user cards */
+    height: 250px; /* Fixed height for consistency */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+    overflow: hidden;
 }
 
-.all-users-ui .user-card img {
-    width: 60px;
-    height: 60px;
+.friend-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
+    background-color: rgba(255, 255, 255, 1); /* Solid white background on hover */
+}
+
+.friend-card::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: inherit;
+    filter: blur(20px); /* Blur effect */
+    opacity: 0.6; /* Semi-transparent effect */
+    z-index: -1;
+    transition: opacity 0.3s ease;
+}
+
+.friend-card:hover::before {
+    opacity: 0.8; /* Increase opacity on hover */
+}
+
+.friend-card img {
+    width: 100px; /* Adjusted size for better display */
+    height: 100px; /* Adjusted size for better display */
     border-radius: 50%;
+    border: 5px solid transparent; /* Transparent border for rainbow stroke effect */
+    transition: border-color 0.3s ease; /* Transition for border color change */
 }
 
-.all-users-ui .user-card span {
-    margin-top: 0.5rem;
+.friend-card:hover img {
+    border-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.7)) drop-shadow(0 0 20px rgba(255, 165, 0, 0.7)) drop-shadow(0 0 30px rgba(255, 255, 0, 0.7)) drop-shadow(0 0 40px rgba(0, 128, 0, 0.7)) drop-shadow(0 0 50px rgba(0, 0, 255, 0.7)) drop-shadow(0 0 60px rgba(75, 0, 130, 0.7)) drop-shadow(0 0 70px rgba(238, 130, 238, 0.7));
+}
+
+.friend-card span {
+    margin-top: 1rem; /* Adjusted margin for spacing */
     font-weight: bold;
-}
-
-.all-users-ui .user-card button {
-    margin-top: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-}
-
-.all-users-ui .user-card button:hover {
-    background-color: #0056b3;
+    text-align: center;
+    color: #333; /* Adjusted text color for better readability */
 }
