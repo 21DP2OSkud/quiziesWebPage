@@ -8,7 +8,7 @@ const sessionData = checkSession(); // session data
 import * as notifications from './gbl_notifications.js';
 const { updateNotificationCount, fetchNotificationCount } = notifications;
 
-let IP = "81.198.7.240";
+import IP from '../appConfig.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-friend-button').addEventListener('click', () => {

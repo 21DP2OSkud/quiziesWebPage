@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="./output.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-        <!-- -->
-        <script src="./gbl_user_authentication_ui.js" type="module"></script>
-        <!--User drop down menu-->
-        <script src="./gbl_user_drop_down.js" type="module"></script>
-        <!--User drop down menu-->
-        <script src="./gbl_toolbar.js" type="module"></script>
-        <!-- -->
-        <script src="./gbl_leftbar.js" type="module"></script>
-        <!-- -->
-        <script src="./gbl_notifications.js" type="module"></script> <!-- Include the notifications script -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="src/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-        <!-- -->
-        <script src="./profile.js" type="module"></script>
-        <title>Tailwind CSS Test</title>
-    </head>
+    <!-- -->
+    <script src="src/gbl_user_authentication_ui.js" type="module"></script>
+    <!--User drop down menu-->
+    <script src="src/gbl_user_drop_down.js" type="module"></script>
+    <!--User drop down menu-->
+    <script src="src/gbl_toolbar.js" type="module"></script>
+    <!-- -->
+    <script src="src/gbl_leftbar.js" type="module"></script>
+    <!-- -->
+    <script src="src/gbl_notifications.js" type="module"></script> <!-- Include the notifications script -->
+
+    <title>Tailwind CSS Test</title>
+</head>
 <body class="h-screen bg-gradient-to-b from-sky-100 to-rose-200">
-    <nav id="nav-bar" class="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-3">
+    <nav id="nav-bar" class="">
+        <div id="documentnav-routes-div" class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-3">
             <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
                 <img src="" class="h-8" alt="Logo" />
-                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Quizies</span>
+                <span id="logo-span" class="self-center text-2xl font-semibold whitespace-nowrap">Quizies</span>
             </a>
             <button data-collapse-toggle="navbar-solid-bg" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-solid-bg" aria-expanded="false">
                 <span class="sr-only">Open main menu</span>
@@ -37,16 +35,16 @@
             <div class="hidden w-full md:block md:w-auto" id="navbar-solid-bg">
                 <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
                     <li>
-                        <a id="home-link" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</a>
+                        <a id="home-link" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700">Home</a>
                     </li>
                     <li>
-                        <a id="about-link" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
+                        <a id="about-link" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700">About</a>
                     </li>
                     <li>
-                        <a id="services-link" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Services</a>
+                        <a id="services-link" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700">Services</a>
                     </li>
                     <li>
-                        <a id="quizes-link" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Quizzes</a>
+                        <a id="quizes-link" class="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700">Quizzes</a>
                     </li>
                 </ul>
             </div>
@@ -66,8 +64,11 @@
         </div>
     </nav>
 
-    <div class="w-screen" id="page-content">
-        <!-- Profile content will be loaded here -->
+
+    <div w-screen>
+        <h1 class="text-3xl font-bold pt-16 pl-[12.5%]">About</h1>
+        <div class="iframe"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2175.726493051122!2d24.104024707615707!3d56.9534871071051!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46eecf7bac058ce9%3A0x96a8a0e931b27448!2sRiga%20State%20Technical%20School!5e0!3m2!1sen!2slv!4v1717528924409!5m2!1sen!2slv" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+
     </div>
 </body>
 </html>

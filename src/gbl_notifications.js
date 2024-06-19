@@ -3,7 +3,7 @@ import * as session from './gbl_check_session.js';
 const { checkSession } = session;
 const sessionData = checkSession(); // session data
 
-let IP = "81.198.7.240";
+import IP from '../appConfig.js';
 
 
 async function handleAccept(request_id) {
@@ -241,6 +241,7 @@ function initializeNotifications() {
     
     const profileAndNotifications = document.getElementById('profile-and_notifications');
     const currentPage = window.location.pathname;
+    const routesDiv = document.getElementById('documentnav-routes-div');
 
     const bellIcon = document.createElement('button');
     bellIcon.type = 'button';
@@ -262,19 +263,23 @@ function initializeNotifications() {
     }
 
     switch (currentPage) {
-        case "/src/index.html":
+        case "/index.html":
+            routesDiv.style.backgroundColor = "rgb(220,252,231)";
             bellIcon.style.backgroundColor = "rgb(220,252,231)";
             addHoverEffect(bellIcon, "rgb(200, 252, 220)")
             break;
-        case "/src/about.html":
+        case "/about.html":
+            routesDiv.style.backgroundColor = "rgb(254,249,195)";
             bellIcon.style.backgroundColor = "rgb(254,249,195)";
             addHoverEffect(bellIcon, "rgb(255, 240, 170)")
             break;
-        case "/src/services.html":
+        case "/services.html":
+            routesDiv.style.backgroundColor = "rgb(252,231,243)";
             bellIcon.style.backgroundColor = "rgb(252,231,243)";
             addHoverEffect(bellIcon, "rgb(252, 217, 237)")
             break;
-        case "/src/quizzes.html":
+        case "/quizzes.html":
+            routesDiv.style.backgroundColor = "rgb(219,234,254)";
             bellIcon.style.backgroundColor = "rgb(219,234,254)";
             addHoverEffect(bellIcon, "rgb(207, 227, 253)")
             break;
@@ -287,7 +292,9 @@ function initializeNotifications() {
         openNotificationsPanel();
     });
 
-    profileAndNotifications.insertBefore(bellIcon, profileAndNotifications.firstChild);
+    if (sessionData.session) {
+        profileAndNotifications.insertBefore(bellIcon, profileAndNotifications.firstChild);
+    }
 
     const storedNotificationCount = JSON.parse(localStorage.getItem('notificationCount'));
 

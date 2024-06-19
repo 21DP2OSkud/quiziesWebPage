@@ -14,7 +14,7 @@ const {
 / Admin fetch functions
 */
 
-let IP = "81.198.7.240";
+import IP from '../appConfig.js';
 
 // Function to fetch users from the server
 function fetchUsers() {

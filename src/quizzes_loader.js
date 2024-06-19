@@ -1,7 +1,7 @@
 // quizzes_loader.js
 let quizzesData = null;
 let quizzesPromise = null;
-let IP = "81.198.7.240";
+import IP from '../appConfig.js';
 
 function loadAllQuizzesFromDB() {
     if (quizzesData) {

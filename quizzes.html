@@ -3,35 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./output.css" rel="stylesheet">
+    <link href="src/output.css" rel="stylesheet">
     <!--Search icon-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <!-- -->
-    <script src="./gbl_user_authentication_ui.js" type="module"></script>
+    <script src="src/gbl_user_authentication_ui.js" type="module"></script>
     <!--User drop down menu-->
-    <script src="./gbl_user_drop_down.js" type="module"></script>
+    <script src="src/gbl_user_drop_down.js" type="module"></script>
     <!--User drop down menu-->
-    <script src="./gbl_toolbar.js" type="module"></script>
-    <!--User drop down menu-->
-    <script src="./gbl_leftbar.js" type="module"></script>
+    <script src="src/gbl_toolbar.js" type="module"></script>
     <!-- -->
-    <script src="./gbl_notifications.js" type="module"></script> <!-- Include the notifications script -->
+    <script src="src/gbl_leftbar.js" type="module"></script>
+    <!-- -->
+    <script src="src/gbl_notifications.js" type="module"></script> <!-- Include the notifications script -->
     
 
-    <script src="./quizzes_clock_test.js" type="module"></script>
+    <script src="src/quizzes_clock_test.js" type="module"></script>
     <!--Search-->
-    <script src="./quizzes_search.js" type="module"></script>
+    <script src="src/quizzes_search.js" type="module"></script>
     <!--Create quiz-->
-    <script src="./quizzes_create_quiz.js" type="module"></script>
+    <script src="src/quizzes_create_quiz.js" type="module"></script>
     <!-- Edit quiz -->
-    <script src="./quizzes_edit_quiz.js" type="module"></script>
+    <script src="src/quizzes_edit_quiz.js" type="module"></script>
 
     <title>Tailwind CSS Test</title>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-sky-100 to-rose-200">
     <nav id="nav-bar" class="">
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-3 bg-blue-100">
+        <div id="documentnav-routes-div" class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-3">
             <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
                 <img src="" class="h-8" alt="Logo" />
                 <span id="logo-span" class="self-center text-2xl font-semibold whitespace-nowrap">Quizies</span>

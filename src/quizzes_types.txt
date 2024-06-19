@@ -1,0 +1,5 @@
+basic - ir bilde/jautājums/video un 1 vai vairāki (ja ir multiplayer selected) cilvēki, kurš vainu raksta atbildi vai selecto no variantiem. (viss ir pielāgojams)
+
+show - manual vai automatic var selectot. Ir 1 vadītājs (ja automatic ir selected tad nav vadītāja). https://www.youtube.com/watch?v=EKdaxEfSobE
+
+daily quizzes - saprotami (kā izstrādāt īsti nē)

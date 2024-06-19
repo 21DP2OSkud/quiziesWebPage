@@ -3,7 +3,7 @@ const {
     checkSession,
 } = session;
 
-let IP = "81.198.7.240";
+import IP from '../appConfig.js';
 
 //
 // Authentication methods
