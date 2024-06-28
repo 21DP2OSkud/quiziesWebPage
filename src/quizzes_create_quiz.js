@@ -41,7 +41,7 @@ function createQuizUI(){
     quizImgDiv.setAttribute("class", "ui-display-img");      
     /* child of quizImgDiv */
     const quizImg = document.createElement("img");
-    quizImg.setAttribute("src", "quizzes_images/default_quiz_img.png");    
+    quizImg.setAttribute("src", "src/quizzes_images/default_quiz_img.png");    
     /* child of quizImgDiv */
     const imgInput = document.createElement("input");
     imgInput.setAttribute("type", "file");

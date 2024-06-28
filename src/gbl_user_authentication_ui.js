@@ -248,7 +248,7 @@ function createRegisterUI() {
     emailDiv.appendChild(emailInput);
 
     passwordDiv.appendChild(passwordLabel);
-    passwordWrapper1.classList.add("relative", "mb-3");
+    passwordWrapper1.classList.add("relative");
     passwordWrapper1.appendChild(passwordInput);
     passwordWrapper1.appendChild(passwordToggle);
     passwordDiv.appendChild(passwordWrapper1);

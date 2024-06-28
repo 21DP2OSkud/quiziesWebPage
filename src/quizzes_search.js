@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function dynamicSearch() {
         const searchInputValue = searchInput.value.toLowerCase();
-        const quizzes = document.querySelectorAll('.quiz-box');
+        const quizzes = document.querySelectorAll('.quiz-container');
 
         quizzes.forEach(quiz => {
             const title = quiz.querySelector('.quiz-title').textContent.toLowerCase();

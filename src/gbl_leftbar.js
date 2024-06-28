@@ -119,7 +119,7 @@ function addLeftBarIcon() {
             allUsersLabel.addEventListener('click', function () {
                 createAdminControlPanel(); // Display admin panel
             });
-            const adminLabel = createLeftBarLabel(5, 'Admin label', "admin");
+            const adminLabel = createLeftBarLabel(5, 'Create Notification', "admin");
             const settingLabel = createLeftBarLabel(6, 'Settings', "default");
     
             labelsDiv.appendChild(myQuizzesLabel);

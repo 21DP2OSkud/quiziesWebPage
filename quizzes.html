@@ -81,9 +81,14 @@
         <p class="text-center font-light text-sm">Here you can choose or simply search for quizzes</p>
         <br>
         <br>
-        <div class="max-w-screen mx-[25%] h-[48px] search-box relative rounded-full">
-            <input type="text" placeholder="Search..." class="search-bar-input rounded-full p-2 w-full h-full border-none outline-none" id="search-input"/>
-            <button type="submit" id="searchBtn" class="fas fa-search text-white absolute end-2.5 bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-[0.88vw] px-4 h-[80%] translate-y-1/8 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition duration-300 ease-in-out transform hover:scale-105"> Search</button>
+        <div class="search-box rounded-full">
+            <div class="input-container">
+                <input type="text" placeholder="Search..." class="search-bar-input rounded-full p-2" id="search-input"/>
+                <div class="button-container">
+                    <button type="button" id="filterBtn" class="fas fa-filter text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-[0.88vw] px-4 h-[80%] dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition duration-300 ease-in-out transform hover:scale-105"></button>
+                    <button type="submit" id="searchBtn" class="fas fa-search text-white bg-gray-800 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-[0.88vw] px-4 h-[80%] dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition duration-300 ease-in-out transform hover:scale-105"></button>
+                </div>
+            </div>
         </div>
         <br>
         <br>
